@@ -7,8 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
-@interface ViewController : NSViewController
+#import "WindowBackgroundView.h"
+@interface ViewController : NSViewController <MouseDirectionListener>
 
 
 @end

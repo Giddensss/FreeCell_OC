@@ -63,7 +63,7 @@
 - (NSString *) getPrintableSuit {
     switch (suit) {
         case suitDiomand :
-            return @"Diomands";
+            return @"Diamonds";
         case suitHeart:
             return @"Hearts";
         case suitClub:

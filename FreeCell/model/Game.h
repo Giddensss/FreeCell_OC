@@ -7,12 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Card.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface Game : NSObject
 
 - (void) setupGame;
+
+- (NSArray <NSArray <Card *> *>*) getBoard;
 
 @end
 

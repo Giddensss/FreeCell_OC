@@ -8,12 +8,20 @@
 
 #import "AppDelegate.h"
 
-@interface AppDelegate ()
-
+@interface AppDelegate () {
+    
+}
 @end
 
 @implementation AppDelegate
-
+-(id) init {
+    self = [super init];
+    if (self) {
+        _myGame = [[Game alloc] init];
+        [_myGame setupGame];
+    }
+    return self;
+}
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
 }

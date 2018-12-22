@@ -35,7 +35,7 @@
 - (Card *) dealCard {
     int index = 0;
     if (isShuffle) {
-        index = [self getRandomNumberBetween:0 to:(int)deck.count];
+        index = [self getRandomNumberBetween:0 to:(int)deck.count - 1];
     }
     Card *deltCard = deck[index];
     [deck removeObjectAtIndex:index];
