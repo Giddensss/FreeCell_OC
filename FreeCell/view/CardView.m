@@ -52,14 +52,7 @@
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
-    int index = [self getRandomNumberBetween:0 to:2];
-    if (index == 0) {
-        [[NSColor whiteColor] set];
-    } else if (index == 1) {
-        [[NSColor grayColor] set];
-    } else if (index == 2) {
-        [[NSColor yellowColor] set];
-    }
+    [[NSColor clearColor] set];
     NSRectFill(dirtyRect);
     
     // Drawing code here.

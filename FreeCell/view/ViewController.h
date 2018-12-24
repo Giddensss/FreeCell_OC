@@ -8,7 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 #import "WindowBackgroundView.h"
-@interface ViewController : NSViewController <MouseDirectionListener>
+#import "CardView.h"
+#import "EmptyCardView.h"
+@interface ViewController : NSViewController <MouseDirectionListener,CardViewClickListener,EmptyCardCellClickListener>
 
 
 @end

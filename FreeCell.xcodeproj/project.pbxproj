@@ -12,9 +12,10 @@
 		E72DA76121CE29CC00F18969 /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = E72DA76021CE29CC00F18969 /* Game.m */; };
 		E72DA76421CE65CD00F18969 /* WindowBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = E72DA76321CE65CD00F18969 /* WindowBackgroundView.m */; };
 		E72DA76721CE7F8A00F18969 /* CardView.m in Sources */ = {isa = PBXBuildFile; fileRef = E72DA76621CE7F8A00F18969 /* CardView.m */; };
+		E72DA76A21CF8A2600F18969 /* EmptyCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = E72DA76921CF8A2600F18969 /* EmptyCardView.m */; };
+		E72DA76C21D07F7000F18969 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E72DA76B21D07F7000F18969 /* Assets.xcassets */; };
 		E7A7EE502175C950008379A1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E7A7EE4F2175C950008379A1 /* AppDelegate.m */; };
 		E7A7EE532175C950008379A1 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7A7EE522175C950008379A1 /* ViewController.m */; };
-		E7A7EE552175C951008379A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7A7EE542175C951008379A1 /* Assets.xcassets */; };
 		E7A7EE582175C951008379A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7A7EE562175C951008379A1 /* Main.storyboard */; };
 		E7A7EE5B2175C951008379A1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E7A7EE5A2175C951008379A1 /* main.m */; };
 /* End PBXBuildFile section */
@@ -31,12 +32,14 @@
 		E72DA76321CE65CD00F18969 /* WindowBackgroundView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WindowBackgroundView.m; sourceTree = "<group>"; };
 		E72DA76521CE7F8A00F18969 /* CardView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CardView.h; sourceTree = "<group>"; };
 		E72DA76621CE7F8A00F18969 /* CardView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CardView.m; sourceTree = "<group>"; };
+		E72DA76821CF8A2600F18969 /* EmptyCardView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyCardView.h; sourceTree = "<group>"; };
+		E72DA76921CF8A2600F18969 /* EmptyCardView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyCardView.m; sourceTree = "<group>"; };
+		E72DA76B21D07F7000F18969 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E7A7EE4B2175C950008379A1 /* FreeCell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeCell.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7A7EE4E2175C950008379A1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E7A7EE4F2175C950008379A1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		E7A7EE512175C950008379A1 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		E7A7EE522175C950008379A1 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		E7A7EE542175C951008379A1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E7A7EE572175C951008379A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E7A7EE592175C951008379A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E7A7EE5A2175C951008379A1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -76,6 +79,8 @@
 				E72DA76321CE65CD00F18969 /* WindowBackgroundView.m */,
 				E72DA76521CE7F8A00F18969 /* CardView.h */,
 				E72DA76621CE7F8A00F18969 /* CardView.m */,
+				E72DA76821CF8A2600F18969 /* EmptyCardView.h */,
+				E72DA76921CF8A2600F18969 /* EmptyCardView.m */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -120,8 +125,8 @@
 				E72DA75621CE15A500F18969 /* listener+callback */,
 				E72DA75521CE15A000F18969 /* view */,
 				E72DA75421CE158B00F18969 /* model */,
-				E7A7EE542175C951008379A1 /* Assets.xcassets */,
 				E7A7EE562175C951008379A1 /* Main.storyboard */,
+				E72DA76B21D07F7000F18969 /* Assets.xcassets */,
 				E7A7EE592175C951008379A1 /* Info.plist */,
 				E7A7EE5A2175C951008379A1 /* main.m */,
 				E7A7EE5C2175C951008379A1 /* FreeCell.entitlements */,
@@ -186,7 +191,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E7A7EE552175C951008379A1 /* Assets.xcassets in Resources */,
+				E72DA76C21D07F7000F18969 /* Assets.xcassets in Resources */,
 				E7A7EE582175C951008379A1 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,6 +210,7 @@
 				E7A7EE5B2175C951008379A1 /* main.m in Sources */,
 				E72DA76121CE29CC00F18969 /* Game.m in Sources */,
 				E7A7EE502175C950008379A1 /* AppDelegate.m in Sources */,
+				E72DA76A21CF8A2600F18969 /* EmptyCardView.m in Sources */,
 				E72DA75B21CE15EB00F18969 /* Card.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

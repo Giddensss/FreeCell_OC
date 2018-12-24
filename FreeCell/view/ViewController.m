@@ -10,7 +10,6 @@
 #import "../supports/const.h"
 #import "../supports/AppDelegate.h"
 #import "../model/Game.h"
-#import "CardView.h"
 
 @interface ViewController() {
     IBOutlet NSButton *indicator;
@@ -76,6 +75,15 @@
     for (NSArray *cardColumn in board) {
         NSMutableArray<CardView *> *temp = [NSMutableArray array];
         for (int row = 0; row < cardColumn.count; row ++) {
+            if (row == 0) {
+                EmptyCardView *emptyCard = [[EmptyCardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
+                                                                                           boardView.frame.size.height - (card_height + row * card_vertical_overlap_gap),
+                                                                                           card_width,
+                                                                                           card_height)];
+                emptyCard.column = column;
+                emptyCard.clickListener = self;
+                [boardView addSubview:emptyCard];
+            }
             CardView *card = [[CardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
                                                                         boardView.frame.size.height - (card_height + row * card_vertical_overlap_gap),
                                                                         card_width,
@@ -83,8 +91,10 @@
             [card setCardViewWithValue:[cardColumn[row] getValue] suit:[cardColumn[row] getSuit] title:[cardColumn[row] getPrintableCardString]];
             card.rowInBoard = row;
             card.columnInBoard = column;
+            card.cardListener = self;
             [temp addObject:card];
             [boardView addSubview:card];
+             
         }
         column ++;
     }
@@ -128,6 +138,25 @@
              [indicator setImage:[NSImage imageNamed:@"indicator_right"]];
             break;
     }
+}
+
+- (void) onCardViewClicked:(CGPoint)cardPosition {
+    int column = cardPosition.x;
+    int row = cardPosition.y;
+}
+
+- (void) onCardViewMouseRightDown:(CGPoint)cardPosition {
+    int column = cardPosition.x;
+    int row = cardPosition.y;
+}
+
+- (void) onCardViewMouseRightUp:(CGPoint)cardPosition {
+    int column = cardPosition.x;
+    int row = cardPosition.y;
+}
+
+- (void) onViewClicked:(int)column {
+    
 }
 
 

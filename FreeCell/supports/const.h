@@ -9,7 +9,7 @@
 #ifndef const_h
 #define const_h
 #define DEBUG_PRINT 1
-#define DEBUG_VIEW 1
+#define DEBUG_VIEW 0
 
 enum CardSuit{
     suitSpade,
@@ -33,6 +33,6 @@ const static int number_of_free_cells = number_of_temp_cells + number_of_column;
 // cosnt for UI
 const static CGFloat card_horizontal_margin = 20.0f;
 const static CGFloat card_vertical_overlap_gap = 35;
-const static CGFloat card_width = 78;
-const static CGFloat card_height = 100.0f;
+const static CGFloat card_width = 111.0f;
+const static CGFloat card_height = 166.0f;
 #endif /* const_h */

@@ -67,7 +67,7 @@
         case suitHeart:
             return @"Hearts";
         case suitClub:
-            return @"Clues";
+            return @"Clubs";
         case suitSpade:
             return @"Spades";
     }
