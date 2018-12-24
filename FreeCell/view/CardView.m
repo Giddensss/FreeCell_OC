@@ -13,6 +13,7 @@
     CGFloat viewWidth;
     CGFloat viewHeight;
     NSString *bgImage;
+    NSString *hightLightImage;
 #if DEBUG_VIEW
     NSTextView *label;
     NSString *title;
@@ -44,6 +45,7 @@
 
 - (void) setCardViewWithValue:(int)value suit:(enum CardSuit)suit title:(NSString *)title{
     bgImage = [NSString stringWithFormat:@"card_%d_%d",value,suit];
+    hightLightImage = [NSString stringWithFormat:@"card_%d_%d_highlight",value,suit];
     
 #if DEBUG_VIEW
     self->title = title;
@@ -56,6 +58,26 @@
     NSRectFill(dirtyRect);
     
     // Drawing code here.
+}
+
+- (void) selectCard {
+    [background setImage:[NSImage imageNamed:hightLightImage]];
+}
+
+- (void) deselectCard {
+    [background setImage:[NSImage imageNamed:bgImage]];
+}
+
+- (void) mouseUp:(NSEvent *)event {
+    [_cardListener onCardViewClicked:CGPointMake(_columnInBoard, _rowInBoard)];
+}
+
+- (void) rightMouseDown:(NSEvent *)event {
+    [_cardListener onCardViewMouseRightUp:CGPointMake(_columnInBoard, _rowInBoard)];
+}
+
+- (void) rightMouseUp:(NSEvent *)event {
+    [_cardListener onCardViewMouseRightDown:CGPointMake(_columnInBoard, _rowInBoard)];
 }
 
 -(int)getRandomNumberBetween:(int)from to:(int)to {

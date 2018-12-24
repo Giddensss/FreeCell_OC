@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Card : NSObject
 
+- (id) initEmptyCard;
+
 - (id) initCardWithValue:(int) value suit:(enum CardSuit) suit;
 
 - (int) getValue;
@@ -21,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (enum CardColor) getCardColor;
 
 - (NSString *) getPrintableCardString;
+
+- (BOOL) isEmptyCard;
 
 @end
 

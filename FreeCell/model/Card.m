@@ -16,6 +16,14 @@
 @end
 @implementation Card
 
+- (id) initEmptyCard {
+    self = [super init];
+    if (self) {
+        value = -1;
+    }
+    return self;
+}
+
 - (id) initCardWithValue:(int)value suit:(enum CardSuit)suit {
     self = [super init];
     if (self) {
@@ -40,6 +48,10 @@
 
 - (enum CardSuit) getSuit {
     return suit;
+}
+
+- (BOOL) isEmptyCard {
+    return value == -1;
 }
 
 - (NSString *) getPrintableCardString {

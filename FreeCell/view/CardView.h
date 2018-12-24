@@ -36,6 +36,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property id<CardViewClickListener> cardListener;
 - (void) setCardViewWithValue:(int) value suit:(enum CardSuit) suit title:(NSString *) title;
 
+- (void) selectCard;
+
+- (void) deselectCard;
+
 @end
 
 NS_ASSUME_NONNULL_END
