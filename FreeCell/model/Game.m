@@ -131,7 +131,7 @@
 - (BOOL) checkMultiSelectAtColumn:(int)column fromRow:(int)row {
     NSArray *c = gameboard[column];
     for (int i = row; i < c.count-1; i ++) {
-        if ([c[i] getValue] + 1 != [c[i+1] getValue] || [c[i] getCardColor] == [c[i+1] getCardColor]) {
+        if ([c[i] getValue] - 1 != [c[i+1] getValue] || [c[i] getCardColor] == [c[i+1] getCardColor]) {
             return NO;
         }
     }
