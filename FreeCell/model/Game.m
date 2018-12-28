@@ -268,21 +268,23 @@
 #endif
     if (cards.count <= freeCellCount) return YES;
     NSMutableArray <Card *> *temp = [NSMutableArray arrayWithArray:lastRow];
-    for (Card *c in cards) {
+    for (int i = (int)cards.count - 1; i >= 0; i--) {
+        Card *c = cards[i];
         int index = 0;
+        NSLog(@"!!");
         while (index < temp.count) {
             Card *tc = temp[index];
             if ([c isEmptyCard]) {
                 freeCellCount += 1;
                 [temp removeObjectAtIndex:index];
                 break;
-            }
-            if ([c getValue] + 1 == [tc getValue] && [c getCardColor] != [tc getCardColor]) {
+            } else if ([c getValue] + 1 == [tc getValue] && [c getCardColor] != [tc getCardColor]) {
                 freeCellCount += 1;
                 [temp removeObjectAtIndex:index];
                 break;
             } else if (tempFreeCellCount > 0) {
                 tempFreeCellCount -= 1;
+                NSLog(@"?>");
                 break;
             }
             index ++;

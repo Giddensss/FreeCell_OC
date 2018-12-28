@@ -23,6 +23,7 @@
     IBOutlet NSButton *cell2;
     IBOutlet NSButton *cell3;
     IBOutlet NSView *boardView;
+    IBOutlet NSView *ChoicePickerView;
     
     NSMutableArray <NSButton *>*tempCells;
     NSMutableArray <NSButton *>*cells;
@@ -117,6 +118,13 @@
         [cards addObject:temp];
         column ++;
     }
+    
+    [ChoicePickerView removeFromSuperview];
+    [ChoicePickerView setFrame:CGRectMake((self.view.frame.size.width - choicePickerViewWidth) / 2,
+                                          (self.view.frame.size.height - choicePickerViewHeight) / 2,
+                                          choicePickerViewWidth, choicePickerViewHeight)];
+    [self.view addSubview:ChoicePickerView];
+    [ChoicePickerView setHidden:YES];
     
 }
 
@@ -287,6 +295,13 @@
     clickedRow = -1;
     clickedColumn = -1;
     clickedFreeCellIndex = -1;
+    
+    [ChoicePickerView removeFromSuperview];
+    [ChoicePickerView setFrame:CGRectMake((self.view.frame.size.width - choicePickerViewWidth) / 2,
+                                          (self.view.frame.size.height - choicePickerViewHeight) / 2,
+                                          choicePickerViewWidth, choicePickerViewHeight)];
+    [self.view addSubview:ChoicePickerView];
+    [ChoicePickerView setHidden:YES];
 }
 
 - (void) onMouseInWindowPositionChanged:(enum mouseInWindow)position {
@@ -395,6 +410,7 @@
                     [self showIllegalMoveWarning];
                 } else if (ret == -2) {
                     // no enough free cells
+                    [self deselectCardsAtColumn];
                 }
                 clickedColumn = -1;
                 clickedRow = -1;
@@ -502,7 +518,35 @@
 }
 
 - (void) onViewClicked:(int)column {
-    
+#if DEBUG_PRINT
+    NSLog(@"Empty view is click");
+#endif
+    if (isSelected) {
+        if (isSelectMultiple) {
+            [ChoicePickerView setHidden:NO];
+        } else {
+            
+        }
+    }
+}
+
+- (void) onMoveWholeListBtnClicked {
+#if DEBUG_PRINT
+    NSLog(@"Move Whole list to the empty column");
+#endif
+}
+
+- (void) onMoveSingleCardBtnClicked {
+#if DEBUG_PRINT
+    NSLog(@"Move single card to the empty column");
+#endif
+}
+
+- (void) onMouseClickedOnView {
+#if DEBUG_PRINT
+    NSLog(@"Hide ChoicePickerView");
+    [ChoicePickerView setHidden:YES];
+#endif
 }
 
 - (void) showIllegalMoveWarning {
@@ -558,6 +602,14 @@
         [cards[column][i] setFrame:CGRectMake((horizontal_gap + card_width) * column,
                                               boardView.frame.size.height - (card_height + i  * verticalGap),
                                               card_width, card_height)];
+    }
+}
+
+- (void)prepareForSegue:(NSStoryboardSegue *)segue sender:(id)sender {
+    NSString *identifier = [segue identifier];
+    if ([identifier isEqualToString:@"choicePicker"]) {
+        ChoicePickerViewController *controller = [segue destinationController];
+        controller.listener = self;
     }
 }
 

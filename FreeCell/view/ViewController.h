@@ -10,7 +10,8 @@
 #import "WindowBackgroundView.h"
 #import "CardView.h"
 #import "EmptyCardView.h"
-@interface ViewController : NSViewController <MouseDirectionListener,CardViewClickListener,EmptyCardCellClickListener>
+#import "ChoicePickerViewController.h"
+@interface ViewController : NSViewController <MouseDirectionListener,CardViewClickListener,EmptyCardCellClickListener,ChoiceViewControllerBtnListener>
 
 
 @end

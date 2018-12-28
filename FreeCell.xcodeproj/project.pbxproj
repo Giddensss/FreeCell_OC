@@ -14,6 +14,8 @@
 		E72DA76721CE7F8A00F18969 /* CardView.m in Sources */ = {isa = PBXBuildFile; fileRef = E72DA76621CE7F8A00F18969 /* CardView.m */; };
 		E72DA76A21CF8A2600F18969 /* EmptyCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = E72DA76921CF8A2600F18969 /* EmptyCardView.m */; };
 		E72DA76C21D07F7000F18969 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E72DA76B21D07F7000F18969 /* Assets.xcassets */; };
+		E792E53021D65FD60092BBDC /* ChoicePickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E792E52F21D65FD60092BBDC /* ChoicePickerViewController.m */; };
+		E792E53321D664BD0092BBDC /* ChoicePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = E792E53221D664BD0092BBDC /* ChoicePickerView.m */; };
 		E7A7EE502175C950008379A1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E7A7EE4F2175C950008379A1 /* AppDelegate.m */; };
 		E7A7EE532175C950008379A1 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7A7EE522175C950008379A1 /* ViewController.m */; };
 		E7A7EE582175C951008379A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7A7EE562175C951008379A1 /* Main.storyboard */; };
@@ -35,6 +37,10 @@
 		E72DA76821CF8A2600F18969 /* EmptyCardView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmptyCardView.h; sourceTree = "<group>"; };
 		E72DA76921CF8A2600F18969 /* EmptyCardView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EmptyCardView.m; sourceTree = "<group>"; };
 		E72DA76B21D07F7000F18969 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E792E52E21D65FD60092BBDC /* ChoicePickerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChoicePickerViewController.h; sourceTree = "<group>"; };
+		E792E52F21D65FD60092BBDC /* ChoicePickerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChoicePickerViewController.m; sourceTree = "<group>"; };
+		E792E53121D664BD0092BBDC /* ChoicePickerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChoicePickerView.h; sourceTree = "<group>"; };
+		E792E53221D664BD0092BBDC /* ChoicePickerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChoicePickerView.m; sourceTree = "<group>"; };
 		E7A7EE4B2175C950008379A1 /* FreeCell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeCell.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7A7EE4E2175C950008379A1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E7A7EE4F2175C950008379A1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -81,6 +87,10 @@
 				E72DA76621CE7F8A00F18969 /* CardView.m */,
 				E72DA76821CF8A2600F18969 /* EmptyCardView.h */,
 				E72DA76921CF8A2600F18969 /* EmptyCardView.m */,
+				E792E52E21D65FD60092BBDC /* ChoicePickerViewController.h */,
+				E792E52F21D65FD60092BBDC /* ChoicePickerViewController.m */,
+				E792E53121D664BD0092BBDC /* ChoicePickerView.h */,
+				E792E53221D664BD0092BBDC /* ChoicePickerView.m */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -205,9 +215,11 @@
 			files = (
 				E72DA75E21CE1A8400F18969 /* Deck.m in Sources */,
 				E7A7EE532175C950008379A1 /* ViewController.m in Sources */,
+				E792E53321D664BD0092BBDC /* ChoicePickerView.m in Sources */,
 				E72DA76721CE7F8A00F18969 /* CardView.m in Sources */,
 				E72DA76421CE65CD00F18969 /* WindowBackgroundView.m in Sources */,
 				E7A7EE5B2175C951008379A1 /* main.m in Sources */,
+				E792E53021D65FD60092BBDC /* ChoicePickerViewController.m in Sources */,
 				E72DA76121CE29CC00F18969 /* Game.m in Sources */,
 				E7A7EE502175C950008379A1 /* AppDelegate.m in Sources */,
 				E72DA76A21CF8A2600F18969 /* EmptyCardView.m in Sources */,

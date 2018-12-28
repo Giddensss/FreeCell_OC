@@ -35,4 +35,6 @@ const static CGFloat card_horizontal_margin = 20.0f;
 const static CGFloat card_vertical_overlap_gap = 35;
 const static CGFloat card_width = 111.0f;
 const static CGFloat card_height = 166.0f;
+const static CGFloat choicePickerViewWidth = 330.0f;
+const static CGFloat choicePickerViewHeight = 150.0f;
 #endif /* const_h */

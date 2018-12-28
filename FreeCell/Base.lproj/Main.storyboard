@@ -831,10 +831,20 @@
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gkJ-dC-xbk">
                                 <rect key="frame" x="95" y="30" width="1010" height="452"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <subviews>
+                                    <containerView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="J4o-Hl-5c6">
+                                        <rect key="frame" x="340" y="159" width="330" height="150"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <connections>
+                                            <segue destination="wG3-30-oP2" kind="embed" identifier="choicePicker" id="L4n-ZU-JcK"/>
+                                        </connections>
+                                    </containerView>
+                                </subviews>
                             </customView>
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="ChoicePickerView" destination="J4o-Hl-5c6" id="Fix-Ss-Z1i"/>
                         <outlet property="boardView" destination="gkJ-dC-xbk" id="qEb-Ql-FRm"/>
                         <outlet property="cell0" destination="Z2Z-zz-i55" id="791-q7-zBH"/>
                         <outlet property="cell1" destination="R5y-pl-PWf" id="mpc-AU-7gd"/>
@@ -850,6 +860,43 @@
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="1159"/>
+        </scene>
+        <!--Choice Picker View Controller-->
+        <scene sceneID="haJ-zQ-ZDn">
+            <objects>
+                <viewController id="wG3-30-oP2" customClass="ChoicePickerViewController" sceneMemberID="viewController">
+                    <view key="view" id="dMb-pK-kaQ" customClass="ChoicePickerView">
+                        <rect key="frame" x="0.0" y="0.0" width="330" height="150"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7DQ-hc-iHy">
+                                <rect key="frame" x="14" y="83" width="302" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Move a single card" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dcM-vE-HNB">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system" size="18"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="onMoveSingleCardBtnClicked:" target="wG3-30-oP2" id="u2s-P9-49U"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Asc-Mi-gDh">
+                                <rect key="frame" x="14" y="31" width="302" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Move whole list of cards" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gS2-Pk-LD0">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system" size="18"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="onMoveCardsBtnClicked:" target="wG3-30-oP2" id="Vo1-3Q-1V8"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                </viewController>
+                <customObject id="BHE-pK-NDp" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="74" y="1825"/>
         </scene>
     </scenes>
     <resources>
