@@ -210,6 +210,15 @@
     selectedCards = [NSMutableArray array];
 }
 
+- (void) resetGame{
+    gameboard = [NSMutableArray array];
+    [deck resetDeck];
+    lastRow = [NSMutableArray array];
+    freeCells = [NSMutableArray array];
+    decks = [NSMutableArray array];
+    [self setupGame];
+}
+
 
 
 
@@ -240,6 +249,11 @@
         int index = 0;
         while (index < temp.count) {
             Card *tc = temp[index];
+            if ([c isEmptyCard]) {
+                freeCellCount += 1;
+                [temp removeObjectAtIndex:index];
+                break;
+            }
             if ([c getValue] + 1 == [tc getValue] && [c getCardColor] != [tc getCardColor]) {
                 freeCellCount += 1;
                 [temp removeObjectAtIndex:index];

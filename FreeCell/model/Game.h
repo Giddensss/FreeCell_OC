@@ -69,6 +69,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) deselectCard;
 
 - (void) deselectCards;
+
+- (void) resetGame;
 @end
 
 NS_ASSUME_NONNULL_END

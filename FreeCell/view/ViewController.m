@@ -140,7 +140,7 @@
             if (flag) {
                 [[cards[clickedColumn] lastObject] removeFromSuperview];
                 [cards[clickedColumn] removeLastObject];
-                [tempCells[index] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
+                [sender setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
                 [myGame deselectCard];
                 clickedColumn = -1;
                 clickedRow = -1;
@@ -193,17 +193,60 @@
     }
 }
 
-
-- (void)setRepresentedObject:(id)representedObject {
-    [super setRepresentedObject:representedObject];
-
-    // Update the view, if already loaded.
-}
-
 - (IBAction)indicatorClicked:(id)sender {
 #if DEBUG_PRINT
     NSLog(@"Indicator Clicked");
 #endif
+    [myGame resetGame];
+    for (int i = 0; i < tempCells.count; i ++ ) {
+        [tempCells[i] setImage:nil];
+        [cells[i] setImage:nil];
+    }
+    
+    for (NSArray <CardView *> *c in cards) {
+        for (CardView *view in c) {
+            [view removeFromSuperview];
+        }
+    }
+    
+    cards = [NSMutableArray array];
+    
+    NSArray *board = [myGame getBoard];
+    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
+    
+    int column = 0;
+    for (NSArray *cardColumn in board) {
+        NSMutableArray<CardView *> *temp = [NSMutableArray array];
+        for (int row = 0; row < cardColumn.count; row ++) {
+            if (row == 0) {
+                EmptyCardView *emptyCard = [[EmptyCardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
+                                                                                           boardView.frame.size.height - (card_height + row * card_vertical_overlap_gap),
+                                                                                           card_width,
+                                                                                           card_height)];
+                emptyCard.column = column;
+                emptyCard.clickListener = self;
+                [boardView addSubview:emptyCard];
+            }
+            CardView *card = [[CardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
+                                                                        boardView.frame.size.height - (card_height + row * card_vertical_overlap_gap),
+                                                                        card_width,
+                                                                        card_height)];
+            [card setCardViewWithValue:[cardColumn[row] getValue] suit:[cardColumn[row] getSuit] title:[cardColumn[row] getPrintableCardString]];
+            card.rowInBoard = row;
+            card.columnInBoard = column;
+            card.cardListener = self;
+            [temp addObject:card];
+            [boardView addSubview:card];
+            
+        }
+        [cards addObject:temp];
+        column ++;
+    }
+    
+    isSelected = NO;
+    isSelectMultiple = NO;
+    clickedRow = -1;
+    clickedColumn = -1;
 }
 
 - (void) onMouseInWindowPositionChanged:(enum mouseInWindow)position {
