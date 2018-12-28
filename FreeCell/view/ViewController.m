@@ -120,15 +120,15 @@
 
 - (void) topCellBtnClicked:(NSButton *) sender {
     NSString *identifier = sender.accessibilityTitle;
+    int index = [[identifier substringFromIndex:4] intValue];
     if ([identifier containsString:@"temp"]) {
-        int index = [[identifier substringFromIndex:4] intValue];
 #if DEBUG_PRINT
         NSLog(@"Click on temp cell %d",index);
 #endif
         if (isSelected) {
-            if ([myGame numberOfCardsAtColumn:clickedColumn] != clickedRow + 1) {
+            if (isSelectMultiple) {
                 [self showIllegalMoveWarning];
-                [myGame deselectCard];
+                [myGame deselectCards];
                 // deselect all the cards
                 [self deselectCardsAtColumn];
                 isSelected = NO;
@@ -159,10 +159,37 @@
         }
 
     } else if ([identifier containsString:@"cell"]) {
-        int index = [[identifier substringFromIndex:4] intValue];
 #if DEBUG_PRINT
         NSLog(@"Click on cell %d",index);
 #endif
+        if (isSelected && !isSelectMultiple) {
+            if ([myGame moveCardToCollectionFromColumn:clickedColumn toCollectionIndex:index]) {
+                [sender setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
+                [[cards[clickedColumn] lastObject] removeFromSuperview];
+                [cards[clickedColumn] removeLastObject];
+                if (cards[clickedColumn].count > realignCardThreshold) {
+                    [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
+                } else {
+                    [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
+                }
+                [myGame deselectCard];
+                clickedColumn = -1;
+                clickedRow = -1;
+                isSelected = NO;
+            } else {
+                if (isSelectMultiple) {
+                    [myGame deselectCards];
+                    [self deselectCardsAtColumn];
+                } else {
+                    [myGame deselectCard];
+                    [cards[clickedColumn][clickedRow] deselectCard];
+                }
+                clickedColumn = -1;
+                clickedRow = -1;
+                isSelected = NO;
+                
+            }
+        }
     }
 }
 
@@ -247,10 +274,7 @@
                         }
                     }
                     
-                    clickedColumn = -1;
-                    clickedRow = -1;
-                    isSelected = NO;
-                    isSelectMultiple = NO;
+                    
                 } else if (ret == 1) {
                     // nothing to move
                 } else if (ret == -1) {
@@ -258,6 +282,10 @@
                 } else if (ret == -2) {
                     // no enough free cells
                 }
+                clickedColumn = -1;
+                clickedRow = -1;
+                isSelected = NO;
+                isSelectMultiple = NO;
             } else {
                 // move single card
                 if ([myGame moveSingleCardFromColumn:clickedColumn toColumn:column]) {

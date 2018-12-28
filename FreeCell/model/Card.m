@@ -69,7 +69,7 @@
             return [NSString stringWithFormat:@"King of %@",[self getPrintableSuit]];
         }
     }
-    return nil;
+    return @"";
 }
 
 - (NSString *) getPrintableSuit {

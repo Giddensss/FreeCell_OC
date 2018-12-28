@@ -52,6 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (int) moveMultipleCardFromColumn:(int) columnFrom toColumn:(int) columnTo;
 
+- (BOOL) moveCardToCollectionFromColumn:(int) columnFrom toCollectionIndex:(int) index;
+
 - (int) numberOfCardsAtColumn:(int) column;
 
 - (NSString *) getSelectedCard;

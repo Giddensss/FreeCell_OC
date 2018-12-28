@@ -42,6 +42,7 @@
         }
         if (i < number_of_free_cells) {
             [freeCells addObject:[[Card alloc] initEmptyCard]];
+            [decks addObject:[[Card alloc] initEmptyCard]];
         }
         Card *card = [deck dealCard];
         if (i > deckLength - number_of_column - 1) {
@@ -120,6 +121,7 @@
     lastRow[columnTo] = [gameboard[columnTo] lastObject] ? [gameboard[columnTo] lastObject] : [[Card alloc] initEmptyCard];
     [gameboard[columnFrom] removeObjectsInArray:selectedCards];
     lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
+    [self deselectCards];
 #if DEBUG_PRINT
     NSLog(@"Cards move from column:\n%@",[self getPrintabeCardColumn:columnFrom]);
     NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
@@ -127,6 +129,39 @@
 #endif
     selectedCards = [NSMutableArray array];
     return 0;
+}
+
+- (BOOL) moveCardToCollectionFromColumn:(int)columnFrom toCollectionIndex:(int)index {
+    Card *card = [gameboard[columnFrom] lastObject];
+#if DEBUG_PRINT
+    NSLog(@"Trying to collect card %@",[card getPrintableCardString]);
+#endif
+    if ([card getValue] == 1) {
+        if ([decks[index] isEmptyCard]) {
+            decks[index] = card;
+            [gameboard[columnFrom] removeLastObject];
+            lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
+            return YES;
+        } else {
+            return NO;
+        }
+    } else {
+        Card *temp = decks[index];
+#if DEBUG_PRINT
+        NSLog(@"Card in the selected cell %@",[temp getPrintableCardString]);
+#endif
+        if ([temp isEmptyCard]) {
+            return NO;
+        } else if ([temp getValue] + 1 == [card getValue] && [temp getSuit] == [card getSuit]) {
+            //[decks addObject:card];
+            decks[index] = card;
+            [gameboard[columnFrom] removeLastObject];
+            lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
+            return YES;
+        } else {
+            return NO;
+        }
+    }
 }
 
 - (int) numberOfCardsAtColumn:(int)column {
@@ -252,7 +287,7 @@
 - (NSString *) getPrintableCardInLastRow {
     NSMutableString *string = [NSMutableString string];
     for (Card * c in lastRow) {
-        NSString *card = [c isEmptyCard] ? @"" : [c getPrintableCardString];
+        NSString *card = [c getPrintableCardString];
         int padding = longest_card_name - (int) card.length;
         [string appendFormat:@"%@%@ |",card,[self getRightPadding:padding]];
     }
