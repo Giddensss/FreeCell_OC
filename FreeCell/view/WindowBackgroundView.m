@@ -51,7 +51,7 @@
         if (mousePositionInWindow != mouseOnLeft) {
             mousePositionInWindow = mouseOnLeft;
             [_listener onMouseInWindowPositionChanged:mousePositionInWindow];
-#if DEBUG_PRINT
+#if DEBUG_VIEW
             NSLog(@"Mouse moving to LEFT");
 #endif
         }
@@ -59,7 +59,7 @@
         if (mousePositionInWindow != mouseOnRight) {
             mousePositionInWindow = mouseOnRight;
             [_listener onMouseInWindowPositionChanged:mousePositionInWindow];
-#if DEBUG_PRINT
+#if DEBUG_VIEW
             NSLog(@"Mouse moving to RIGHT");
 #endif
         }

@@ -16,6 +16,7 @@
     NSMutableArray <Card *>*freeCells;
     Card *selectedCard;
     NSMutableArray <Card *> *selectedCards;
+    NSMutableArray <Card *> *decks;
 }
 @end
 @implementation Game
@@ -26,7 +27,7 @@
         deck = [[Deck alloc] initDeck];
         lastRow = [NSMutableArray array];
         freeCells = [NSMutableArray array];
-        
+        decks = [NSMutableArray array];
     }
     return self;
 }
@@ -66,7 +67,11 @@
     }
     Card *card = [gameboard[column] lastObject];
     [gameboard[column] removeLastObject];
+    lastRow[column] = [gameboard[column] lastObject] ? [gameboard[column] lastObject] : [[Card alloc] initEmptyCard];
     freeCells[index] = card;
+#if DEBUG_PRINT
+    NSLog(@"Here is the cards in last row:\n%@",[self getPrintableCardInLastRow]);
+#endif
     return YES;
 }
 
@@ -78,7 +83,11 @@
     Card *temp = freeCells[index];
     if ([self checkLegalMoveWithLastCardOfTheColumn:lastCard cardToBePlaced:temp]) {
         [gameboard[column] addObject:freeCells[index]];
+        lastRow[column] = freeCells[index];
         freeCells[index] = [[Card alloc] initEmptyCard];
+#if DEBUG_PRINT
+        NSLog(@"Here is the cards in last row:\n%@",[self getPrintableCardInLastRow]);
+#endif
         return 0;
     } else {
         return -1;
@@ -88,16 +97,36 @@
 - (BOOL) moveSingleCardFromColumn:(int)columnFrom toColumn:(int)columnTo {
     Card *fromC = [gameboard[columnFrom] lastObject];
     Card *toC = [gameboard[columnTo] lastObject];
-    if ([fromC getValue] + 1 == [toC getValue] && [fromC getCardColor] != [toC getCardColor]) {
+    if ([self checkLegalMoveWithLastCardOfTheColumn:toC cardToBePlaced:fromC]) {
         [gameboard[columnFrom] removeLastObject];
+        lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
         [gameboard[columnTo] addObject:fromC];
+        lastRow[columnTo] = [gameboard[columnTo] lastObject] ? [gameboard[columnTo] lastObject] : [[Card alloc] initEmptyCard];
 #if DEBUG_PRINT
-        NSLog(@"Here is the card column after card movedL:\n%@",[self getPrintabeCardColumn:columnTo]);
+        NSLog(@"Here is the card column after card moved:\n%@",[self getPrintabeCardColumn:columnTo]);
+        NSLog(@"Here is the last row of the board:\n%@",[self getPrintableCardInLastRow]);
 #endif
         return YES;
     } else {
         return NO;
     }
+}
+
+- (int) moveMultipleCardFromColumn:(int)columnFrom toColumn:(int)columnTo {
+    Card *c = [gameboard[columnTo] lastObject];
+    if ([selectedCards[0] getValue] + 1  != [c getValue] || [selectedCards[0] getCardColor] == [c getCardColor]) return -1;
+    if (![self checkFreeCells:selectedCards]) return -2;
+    [gameboard[columnTo] addObjectsFromArray:selectedCards];
+    lastRow[columnTo] = [gameboard[columnTo] lastObject] ? [gameboard[columnTo] lastObject] : [[Card alloc] initEmptyCard];
+    [gameboard[columnFrom] removeObjectsInArray:selectedCards];
+    lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
+#if DEBUG_PRINT
+    NSLog(@"Cards move from column:\n%@",[self getPrintabeCardColumn:columnFrom]);
+    NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
+    NSLog(@"Last row:\n%@",[self getPrintableCardInLastRow]);
+#endif
+    selectedCards = [NSMutableArray array];
+    return 0;
 }
 
 - (int) numberOfCardsAtColumn:(int)column {
@@ -151,11 +180,48 @@
 
 
 - (BOOL) checkLegalMoveWithLastCardOfTheColumn:(Card *) card1 cardToBePlaced:(Card *) card2 {
-    if ([card1 getCardColor] != [card2 getCardColor] && [card2 getValue] - [card1 getValue] == 1) {
+    if ([card1 getCardColor] != [card2 getCardColor] && [card2 getValue] - [card1 getValue] == -1) {
         return YES;
     } else {
         return NO;
     }
+}
+
+- (BOOL) checkFreeCells:(NSArray <Card *> *) cards{
+    int freeCellCount = 0;
+    int tempFreeCellCount = 0;
+    for(Card *card in freeCells) {
+        if ([card isEmptyCard]) {
+            freeCellCount += 1;
+            tempFreeCellCount += 1;
+        }
+    }
+#if DEBUG_PRINT
+    NSLog(@"Available FreeCells %d",freeCellCount);
+#endif
+    if (cards.count <= freeCellCount) return YES;
+    NSMutableArray <Card *> *temp = [NSMutableArray arrayWithArray:lastRow];
+    for (Card *c in cards) {
+        int index = 0;
+        while (index < temp.count) {
+            Card *tc = temp[index];
+            if ([c getValue] + 1 == [tc getValue] && [c getCardColor] != [tc getCardColor]) {
+                freeCellCount += 1;
+                [temp removeObjectAtIndex:index];
+                break;
+            } else if (tempFreeCellCount > 0) {
+                tempFreeCellCount -= 1;
+                break;
+            }
+            index ++;
+        }
+    }
+#if DEBUG_PRINT
+    NSLog(@"Total available FreeCells %d",freeCellCount);
+#endif
+    if (cards.count <= freeCellCount) return YES;
+    else return NO;
+    
 }
 
 /********************************* PRINT METHODS ***************************************/
@@ -186,7 +252,7 @@
 - (NSString *) getPrintableCardInLastRow {
     NSMutableString *string = [NSMutableString string];
     for (Card * c in lastRow) {
-        NSString *card = [c getPrintableCardString];
+        NSString *card = [c isEmptyCard] ? @"" : [c getPrintableCardString];
         int padding = longest_card_name - (int) card.length;
         [string appendFormat:@"%@%@ |",card,[self getRightPadding:padding]];
     }

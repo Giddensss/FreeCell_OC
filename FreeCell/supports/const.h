@@ -28,7 +28,7 @@ const static int deckLength = 52; // Theres no Jokers in the deck.
 const static int number_of_temp_cells = 4;
 const static int number_of_column = 8;
 const static int longest_card_name = 17;
-const static int number_of_free_cells = number_of_temp_cells + number_of_column;
+const static int number_of_free_cells = number_of_temp_cells;
 
 // cosnt for UI
 const static CGFloat card_horizontal_margin = 20.0f;

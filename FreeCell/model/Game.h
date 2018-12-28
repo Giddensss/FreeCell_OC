@@ -41,6 +41,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL) moveSingleCardFromColumn:(int) columnFrom toColumn:(int) columnTo;
 
+/*
+ * Move selected cards and place them at the end of the target column
+ * @return if move is success: 0. Success
+ *                             1. Nothing to move
+ *                            -1. Invalid move
+ *                            -2. No enough free cells
+ * @param columnTo: the target column
+ *
+ */
+- (int) moveMultipleCardFromColumn:(int) columnFrom toColumn:(int) columnTo;
+
 - (int) numberOfCardsAtColumn:(int) column;
 
 - (NSString *) getSelectedCard;

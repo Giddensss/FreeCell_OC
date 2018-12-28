@@ -30,6 +30,8 @@
     AppDelegate *myDelegate;
     Game *myGame;
     
+    int realignCardThreshold;
+    
     BOOL isSelected;
     BOOL isSelectMultiple;
     int clickedRow;
@@ -76,10 +78,15 @@
         [(NSButtonCell *)cellBtn.cell setHighlightsBy:NSNoCellMask];
     }
     
+    realignCardThreshold = (int) (((CGFloat)boardView.frame.size.height - (CGFloat)card_height) / (CGFloat)card_vertical_overlap_gap) + 1;
+#if DEBUG_PRINT
+    NSLog(@"CardView realign threshold %d",realignCardThreshold);
+#endif
+    
     // setup baord;
     NSArray *board = [myGame getBoard];
     CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
-   
+    
     int column = 0;
     for (NSArray *cardColumn in board) {
         NSMutableArray<CardView *> *temp = [NSMutableArray array];
@@ -206,22 +213,70 @@
             // move card(s)
             if (isSelectMultiple) {
                 // move a list of cards
+                int ret = [myGame moveMultipleCardFromColumn:clickedColumn toColumn:column];
+                if (ret == 0) {
+                    // sucessful
+                    NSArray *temp = [cards[clickedColumn] subarrayWithRange:NSMakeRange(clickedRow, cards[clickedColumn].count - clickedRow)];
+#if DEBUG_PRINT
+                    NSLog(@"length of card to move: %ld",temp.count);
+#endif
+                    int previousCount = (int)cards[clickedColumn].count;
+                    // move the card view first, then adjust the gap between cards
+                    for (int i = 0; i < temp.count; i ++) {
+                        CardView *view = temp[i];
+                        [view deselectCard];
+                        view.columnInBoard = column;
+                        view.rowInBoard = row + i + 1;
+                        [view removeFromSuperview];
+                        [boardView addSubview:view positioned:NSWindowAbove relativeTo:[cards[column] lastObject]];
+                        [cards[column] addObject:view];
+                        [cards[clickedColumn] removeLastObject];
+                        
+                    }
+                    if (cards[column].count > realignCardThreshold) {
+                        [self alignCardBasedOnRow:cards[column] atColumn:column];
+                    } else {
+                        [self alignCardNormal:cards[column] atColumn:column];
+                    }
+                    
+                    if (previousCount > realignCardThreshold) {
+                        if (cards[clickedColumn].count <= realignCardThreshold) {
+                            [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
+                        } else {
+                            [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
+                        }
+                    }
+                    
+                    clickedColumn = -1;
+                    clickedRow = -1;
+                    isSelected = NO;
+                    isSelectMultiple = NO;
+                } else if (ret == 1) {
+                    // nothing to move
+                } else if (ret == -1) {
+                    // invalid move
+                } else if (ret == -2) {
+                    // no enough free cells
+                }
             } else {
                 // move single card
                 if ([myGame moveSingleCardFromColumn:clickedColumn toColumn:column]) {
                     CardView *view = cards[clickedColumn][clickedRow];
+                    [cards[column] addObject:view];
+                    view.columnInBoard = column;
+                    view.rowInBoard = row + 1;
+                    [cards[clickedColumn][clickedRow] deselectCard];
+                    int previousCount = (int)cards[clickedColumn].count;
+                    [cards[clickedColumn] removeLastObject];
                     CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
                     CGFloat startY = boardView.frame.size.height - (card_height + (row + 1) * card_vertical_overlap_gap);
-                    if (startY < 0) {
-                        CGFloat verticalGap = (boardView.frame.size.height - card_height) / (row + 1);
-                        for (int i = 0; i < cards[column].count; i++) {
-                            [cards[column][i] setFrame:CGRectMake((horizontal_gap + card_width) * column,
-                                                                  boardView.frame.size.height - (card_height + i  * verticalGap),
-                                                                  card_width, card_height)];
-                        }
-                        [view setFrame:CGRectMake((horizontal_gap + card_width) * column,
-                                                  boardView.frame.size.height - (card_height + (row + 1)  * verticalGap),
-                                                  card_width, card_height)];
+                    NSLog(@"%ld",cards[column].count);
+                    // check to column alignment
+                    if (cards[column].count >= realignCardThreshold) {
+#if DEBUG_PRINT
+                        NSLog(@"Moving single card needs to realign the cards");
+#endif
+                        [self alignCardBasedOnRow:cards[column] atColumn:column];
                         
                     } else {
                         [view setFrame:CGRectMake((horizontal_gap + card_width) * column,
@@ -229,15 +284,29 @@
                                                   card_width,
                                                   card_height)];
                     }
-                    [cards[column] addObject:view];
+                    
+                    
                     [view removeFromSuperview];
                     [boardView addSubview:view positioned:NSWindowAbove relativeTo:cards[column][row]];
-                    view.columnInBoard = column;
-                    view.rowInBoard = row + 1;
+                    
                     isSelected = NO;
                     [myGame deselectCard];
-                    [cards[clickedColumn][clickedRow] deselectCard];
-                    [cards[clickedColumn] removeLastObject];
+                    
+                    
+                    // check from column alignment
+                    if (previousCount > realignCardThreshold) {
+                        if (cards[clickedColumn].count == realignCardThreshold) {
+#if DEBUG_PRINT
+                            NSLog(@"The from column needs to realign the cards back to normal");
+#endif
+                            [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
+                        } else {
+#if DEBUG_PRINT
+                            NSLog(@"The from column needs to realign the cards based on rows");
+#endif
+                            [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
+                        }
+                    }
                     clickedRow = -1;
                     clickedColumn = -1;
                     return;
@@ -319,6 +388,26 @@
     }
     [myGame selectCardsAtColumn:column fromRow:row];
     isSelectMultiple = YES;
+}
+
+- (void) alignCardNormal:(NSArray <CardView *> *) c atColumn:(int) column {
+    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
+    for (int i = 0; i < c.count; i++) {
+        [c[i] setFrame:NSMakeRect((horizontal_gap + card_width) * column,
+                                                     boardView.frame.size.height - (card_height + i * card_vertical_overlap_gap),
+                                                     card_width,
+                                                     card_height)];
+    }
+}
+
+- (void) alignCardBasedOnRow:(NSArray <CardView *> *) c atColumn:(int) column {
+    CGFloat verticalGap = (boardView.frame.size.height - card_height) / c.count;
+    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
+    for (int i = 0; i < cards[column].count; i++) {
+        [cards[column][i] setFrame:CGRectMake((horizontal_gap + card_width) * column,
+                                              boardView.frame.size.height - (card_height + i  * verticalGap),
+                                              card_width, card_height)];
+    }
 }
 
 @end
