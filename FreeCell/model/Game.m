@@ -76,16 +76,15 @@
     return YES;
 }
 
-- (int) moveCardFromTempCell:(int)index toGameBoardColumn:(int)column {
-    if ([freeCells[index] isEmptyCard]) {
+- (int) moveCardFromTempCellToGameBoardColumn:(int)column {
+    if ([selectedCard isEmptyCard]) {
         return 1;
     }
     Card *lastCard = [gameboard[column] lastObject];
-    Card *temp = freeCells[index];
-    if ([self checkLegalMoveWithLastCardOfTheColumn:lastCard cardToBePlaced:temp]) {
-        [gameboard[column] addObject:freeCells[index]];
-        lastRow[column] = freeCells[index];
-        freeCells[index] = [[Card alloc] initEmptyCard];
+    if ([self checkLegalMoveWithLastCardOfTheColumn:lastCard cardToBePlaced:selectedCard]) {
+        [gameboard[column] addObject:selectedCard];
+        lastRow[column] = selectedCard;
+        freeCells[[freeCells indexOfObject:selectedCard]] = [[Card alloc] initEmptyCard];
 #if DEBUG_PRINT
         NSLog(@"Here is the cards in last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
@@ -153,10 +152,26 @@
         if ([temp isEmptyCard]) {
             return NO;
         } else if ([temp getValue] + 1 == [card getValue] && [temp getSuit] == [card getSuit]) {
-            //[decks addObject:card];
             decks[index] = card;
             [gameboard[columnFrom] removeLastObject];
             lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
+            return YES;
+        } else {
+            return NO;
+        }
+    }
+}
+
+- (BOOL) moveSelectedCardToCollection:(int)index {
+    if ([selectedCard getValue] == 1 && [decks[index] isEmptyCard]) {
+        decks[index] = selectedCard;
+        freeCells[[freeCells indexOfObject:selectedCard]] = [[Card alloc] initEmptyCard];
+        return YES;
+    } else {
+        Card *temp = decks[index];
+        if ([temp getValue] + 1 == [selectedCard getValue] && [temp getSuit] == [selectedCard getSuit]) {
+            decks[index] = selectedCard;
+            freeCells[[freeCells indexOfObject:selectedCard]] = [[Card alloc] initEmptyCard];
             return YES;
         } else {
             return NO;
@@ -170,6 +185,10 @@
 
 - (NSString *) getSelectedCard {
     return [NSString stringWithFormat:@"card_%d_%d",selectedCard.getValue,selectedCard.getSuit];
+}
+
+- (Card *) getRealSelectedCard {
+    return selectedCard;
 }
 
 - (NSArray <Card *>*) getMovedCards {
@@ -190,6 +209,10 @@
     }
     NSLog(@"Cards selected:\n%@",string);
 #endif
+}
+
+- (void) selectCardAtTempCell:(int)index {
+    selectedCard = freeCells[index];
 }
 
 - (BOOL) checkMultiSelectAtColumn:(int)column fromRow:(int)row {

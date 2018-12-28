@@ -36,6 +36,7 @@
     BOOL isSelectMultiple;
     int clickedRow;
     int clickedColumn;
+    int clickedFreeCellIndex;
     
 }
 @end
@@ -51,6 +52,7 @@
         isSelectMultiple = NO;
         clickedRow = -1;
         clickedColumn = -1;
+        clickedFreeCellIndex = -1;
     }
     return self;
 }
@@ -135,11 +137,33 @@
                 clickedColumn = -1;
                 clickedRow = -1;
                 return;
+            } else if (clickedFreeCellIndex != -1) {
+                if (index == clickedFreeCellIndex) {
+                    // deselect
+                    [tempCells[clickedFreeCellIndex] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
+                    [myGame deselectCard];
+                    clickedFreeCellIndex = -1;
+                    isSelected = NO;
+                } else {
+                    [tempCells[clickedFreeCellIndex] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
+                    clickedFreeCellIndex = index;
+                    [myGame selectCardAtTempCell:clickedFreeCellIndex];
+                    [sender setImage:[NSImage imageNamed:[NSString stringWithFormat:@"%@_highlight",[myGame getSelectedCard]]]];
+                }
+                return;
             }
             BOOL flag = [myGame moveCardToTempCellAtColumn:clickedColumn toTempCellIndex:index];
             if (flag) {
                 [[cards[clickedColumn] lastObject] removeFromSuperview];
+                int previousCount = (int)cards[clickedColumn].count;
                 [cards[clickedColumn] removeLastObject];
+                if (previousCount > realignCardThreshold) {
+                    if (cards[clickedColumn].count == realignCardThreshold) {
+                        [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
+                    } else {
+                        [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
+                    }
+                }
                 [sender setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
                 [myGame deselectCard];
                 clickedColumn = -1;
@@ -155,7 +179,14 @@
                 return;
             }
         } else {
-            
+#if DEBUG_PRINT
+            NSLog(@"Select card at free cell index: %d",index);
+            NSLog(@"ClickedColumn %d, ClickedRow %d",clickedColumn,clickedRow);
+#endif
+            isSelected = YES;
+            [myGame selectCardAtTempCell:index];
+            [sender setImage:[NSImage imageNamed:[NSString stringWithFormat:@"%@_highlight",[myGame getSelectedCard]]]];
+            clickedFreeCellIndex = index;
         }
 
     } else if ([identifier containsString:@"cell"]) {
@@ -163,7 +194,15 @@
         NSLog(@"Click on cell %d",index);
 #endif
         if (isSelected && !isSelectMultiple) {
-            if ([myGame moveCardToCollectionFromColumn:clickedColumn toCollectionIndex:index]) {
+            if (clickedColumn == -1 && clickedRow == -1) {
+                if ([myGame moveSelectedCardToCollection:index]) {
+                    [cells[index] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
+                    [myGame deselectCard];
+                }
+                [tempCells[clickedFreeCellIndex] setImage:nil];
+                clickedFreeCellIndex = -1;
+                isSelected = NO;
+            } else if ([myGame moveCardToCollectionFromColumn:clickedColumn toCollectionIndex:index]) {
                 [sender setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
                 [[cards[clickedColumn] lastObject] removeFromSuperview];
                 [cards[clickedColumn] removeLastObject];
@@ -247,6 +286,7 @@
     isSelectMultiple = NO;
     clickedRow = -1;
     clickedColumn = -1;
+    clickedFreeCellIndex = -1;
 }
 
 - (void) onMouseInWindowPositionChanged:(enum mouseInWindow)position {
@@ -261,10 +301,38 @@
 }
 
 - (void) onCardViewClicked:(CGPoint)cardPosition {
+#if DEBUG_PRINT
+    NSLog(@"Card view clicked");
+#endif
     int column = cardPosition.x;
     int row = cardPosition.y;
     if (isSelected) {
-        if (row == clickedRow && column == clickedColumn) {
+        if (clickedColumn == -1 && clickedRow == -1) {
+            int ret = [myGame moveCardFromTempCellToGameBoardColumn:column];
+            if (ret == 0) {
+                // successful
+                CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
+                CardView *view = [[CardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
+                                                                            boardView.frame.size.height - (card_height + (row + 1 ) * card_vertical_overlap_gap), card_width, card_height)];
+                view.rowInBoard = row + 1;
+                view.columnInBoard = column;
+                [view setCardViewWithValue:[[myGame getRealSelectedCard] getValue] suit:[[myGame getRealSelectedCard] getSuit] title:[[myGame getRealSelectedCard] getPrintableCardString]];
+                [cards[column] addObject:view];
+                if (cards[column].count > realignCardThreshold) {
+                    [self alignCardNormal:cards[column] atColumn:column];
+                }
+                [view setCardListener:self];
+                [boardView addSubview:view positioned:NSWindowAbove relativeTo:cards[column][row]];
+            } else if (ret == 1) {
+                // nothing to move
+            } else if (ret == -1) {
+                [self showIllegalMoveWarning];
+            }
+            [tempCells[clickedFreeCellIndex] setImage:nil];
+            clickedFreeCellIndex = -1;
+            isSelected = NO;
+            [myGame deselectCard];
+        } else if (row == clickedRow && column == clickedColumn) {
             // deselect
             isSelected = NO;
             [myGame deselectCard];
@@ -320,8 +388,11 @@
                     
                 } else if (ret == 1) {
                     // nothing to move
+                    [self deselectCardsAtColumn];
                 } else if (ret == -1) {
                     // invalid move
+                    [self deselectCardsAtColumn];
+                    [self showIllegalMoveWarning];
                 } else if (ret == -2) {
                     // no enough free cells
                 }
@@ -438,6 +509,15 @@
     NSAlert *alert = [[NSAlert alloc] init];
     [alert setMessageText:@"Illega Move!"];
     [alert setInformativeText:@"You cannot place this card here!"];
+    [alert addButtonWithTitle:@"Got you"];
+    [alert setIcon:[NSImage imageNamed:@"icon"]];
+    [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:nil];
+}
+
+- (void) showNoEnoughFreeCellsWarning {
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:@"Out of space!"];
+    [alert setInformativeText:@"You don't have enough space to acheive your movement!"];
     [alert addButtonWithTitle:@"Got you"];
     [alert setIcon:[NSImage imageNamed:@"icon"]];
     [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:nil];

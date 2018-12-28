@@ -34,10 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
  *                            -1. Invalid move
  *
  * @param column: the column where the card is going to place
- * @param index: the temp cell index where the card is at
  *
  */
-- (int) moveCardFromTempCell:(int) index toGameBoardColumn:(int) column;
+- (int) moveCardFromTempCellToGameBoardColumn:(int) column;
 
 - (BOOL) moveSingleCardFromColumn:(int) columnFrom toColumn:(int) columnTo;
 
@@ -54,11 +53,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL) moveCardToCollectionFromColumn:(int) columnFrom toCollectionIndex:(int) index;
 
+- (BOOL) moveSelectedCardToCollection:(int) index;
+
 - (int) numberOfCardsAtColumn:(int) column;
 
 - (NSString *) getSelectedCard;
 
+- (Card *) getRealSelectedCard;
+
 - (NSArray <NSString *> *) getMovedCards;
+
+- (void) selectCardAtTempCell:(int) index;
 
 - (void) selectCardAtColumn:(int) column row:(int) row;
 
