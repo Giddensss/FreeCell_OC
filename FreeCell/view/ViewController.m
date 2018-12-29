@@ -172,6 +172,7 @@
                 if ([myGame moveSelectedCardToCollection:index]) {
                     [cells[index] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
                     [myGame deselectCard];
+                    [self checkGame:[myGame checkGame]];
                 }
                 [tempCells[clickedFreeCellIndex] setImage:nil];
                 clickedFreeCellIndex = -1;
@@ -598,6 +599,24 @@
     [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:nil];
 }
 
+- (void) showGameWin {
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:@"Congratulations!"];
+    [alert setInformativeText:@"You win the game!"];
+    [alert addButtonWithTitle:@"Cheers!"];
+    [alert setIcon:[NSImage imageNamed:@"icon"]];
+    [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:nil];
+}
+
+- (void) showDeadEndWarning {
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:@"Dead End!"];
+    [alert setInformativeText:@"You are in a dead end! Re-start a game."];
+    [alert addButtonWithTitle:@"Got you"];
+    [alert setIcon:[NSImage imageNamed:@"icon"]];
+    [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:nil];
+}
+
 - (void) deselectCardsAtColumn{
     NSArray *c = cards[clickedColumn];
     for (int i = clickedRow; i < c.count; i++) {
@@ -649,6 +668,16 @@
     [cards[column] addObject:view];
     [boardView addSubview:view positioned:NSWindowAbove relativeTo:v];
     [myGame deselectCard];
+}
+
+- (void) checkGame:(enum gameStatus) status {
+    switch (status) {
+        case gameWin:
+            break;
+            
+        default:
+            break;
+    }
 }
 
 - (void) initBoardUI {

@@ -10,7 +10,11 @@
 #import "Card.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
+enum gameStatus{
+    gameWin,
+    gamePlaying,
+    gameDeadEnd,
+};
 @interface Game : NSObject
 
 - (void) setupGame;
@@ -78,6 +82,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) deselectCards;
 
 - (void) resetGame;
+
+
+- (enum gameStatus) checkGame;
 @end
 
 NS_ASSUME_NONNULL_END

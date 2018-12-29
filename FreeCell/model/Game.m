@@ -169,6 +169,9 @@
         return YES;
     } else {
         Card *temp = decks[index];
+#if DEBUG_PRINT
+        NSLog(@"Moving selected card to collection %@",[selectedCard getPrintableCardString]);
+#endif
         if ([temp getValue] + 1 == [selectedCard getValue] && [temp getSuit] == [selectedCard getSuit]) {
             decks[index] = selectedCard;
             freeCells[[freeCells indexOfObject:selectedCard]] = [[Card alloc] initEmptyCard];
@@ -277,9 +280,17 @@
     [self setupGame];
 }
 
+- (enum gameStatus) checkGame {
+    if ([self isGameWin]) {
+        return gameWin;
+    } else if ([self checkDeadEnd]){
+        return gameDeadEnd;
+    } else {
+        return gamePlaying;
+    }
+}
 
-
-
+/********************************* HELP METHOD ***************************************/
 
 - (BOOL) checkLegalMoveWithLastCardOfTheColumn:(Card *) card1 cardToBePlaced:(Card *) card2 {
     if (!card1 || [card1 isEmptyCard]) {
@@ -373,6 +384,19 @@
     if (cards.count <= freeCellCount) return YES;
     else return NO;
     
+}
+
+- (BOOL) isGameWin {
+    for (Card *c in decks) {
+        if ([c getValue] != 13) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+- (BOOL) checkDeadEnd {
+    return NO;
 }
 
 /********************************* PRINT METHODS ***************************************/

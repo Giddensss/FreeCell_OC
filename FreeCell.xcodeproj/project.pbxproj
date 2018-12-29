@@ -41,6 +41,7 @@
 		E792E52F21D65FD60092BBDC /* ChoicePickerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChoicePickerViewController.m; sourceTree = "<group>"; };
 		E792E53121D664BD0092BBDC /* ChoicePickerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChoicePickerView.h; sourceTree = "<group>"; };
 		E792E53221D664BD0092BBDC /* ChoicePickerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChoicePickerView.m; sourceTree = "<group>"; };
+		E792E53421D777740092BBDC /* GameListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameListener.h; sourceTree = "<group>"; };
 		E7A7EE4B2175C950008379A1 /* FreeCell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeCell.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7A7EE4E2175C950008379A1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E7A7EE4F2175C950008379A1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -98,6 +99,7 @@
 		E72DA75621CE15A500F18969 /* listener+callback */ = {
 			isa = PBXGroup;
 			children = (
+				E792E53421D777740092BBDC /* GameListener.h */,
 			);
 			path = "listener+callback";
 			sourceTree = "<group>";
