@@ -190,6 +190,7 @@
                 clickedColumn = -1;
                 clickedRow = -1;
                 isSelected = NO;
+                [self checkGame:[myGame checkGame]];
             } else {
                 if (isSelectMultiple) {
                     [myGame deselectCards];
