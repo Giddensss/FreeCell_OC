@@ -77,11 +77,12 @@
 }
 
 - (void) rightMouseDown:(NSEvent *)event {
-    [_cardListener onCardViewMouseRightUp:CGPointMake(_columnInBoard, _rowInBoard)];
+    [_cardListener onCardViewMouseRightDown:CGPointMake(_columnInBoard, _rowInBoard)];
 }
 
 - (void) rightMouseUp:(NSEvent *)event {
-    [_cardListener onCardViewMouseRightDown:CGPointMake(_columnInBoard, _rowInBoard)];
+    NSLog(@">>");
+    [_cardListener onCardViewMouseRightUp:CGPointMake(_columnInBoard, _rowInBoard)];
 }
 
 -(int)getRandomNumberBetween:(int)from to:(int)to {

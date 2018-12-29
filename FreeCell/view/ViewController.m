@@ -357,7 +357,6 @@
                     [cards[clickedColumn] removeLastObject];
                     CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
                     CGFloat startY = boardView.frame.size.height - (card_height + (row + 1) * card_vertical_overlap_gap);
-                    NSLog(@"%ld",cards[column].count);
                     // check to column alignment
                     if (cards[column].count >= realignCardThreshold) {
 #if DEBUG_PRINT
@@ -437,13 +436,26 @@
 }
 
 - (void) onCardViewMouseRightDown:(CGPoint)cardPosition {
-    clickedColumn= cardPosition.x;
-    clickedRow = cardPosition.y;
+    int column= cardPosition.x;
+    int row = cardPosition.y;
+    if (row < cards[column].count - 1) {
+        CardView *view = cards[column][row];
+        //[view removeFromSuperview];
+        [boardView addSubview:view];
+        [view becomeFirstResponder];
+    }
+    
 }
 
 - (void) onCardViewMouseRightUp:(CGPoint)cardPosition {
-    clickedColumn = cardPosition.x;
-    clickedRow = cardPosition.y;
+    int column= cardPosition.x;
+    int row = cardPosition.y;
+    if (row < cards[column].count - 1) {
+        CardView *view = cards[column][row];
+        [view removeFromSuperview];
+        [boardView addSubview:view positioned:NSWindowBelow relativeTo:cards[column][row + 1]];
+        
+    }
 }
 
 - (void) onViewClicked:(int)column sender:(EmptyCardView *)v{
@@ -515,8 +527,8 @@
         } else {
             [boardView addSubview:temp[i] positioned:NSWindowAbove relativeTo:temp[i + 1]];
         }
+        [cards[clickedEmptyColumn] addObject:temp[i]];
     }
-    [cards[clickedEmptyColumn] addObjectsFromArray:temp];
     int previousCount = (int)cards[clickedColumn].count;
     [cards[clickedColumn] removeObjectsInArray:temp];
     if (previousCount > realignCardThreshold) {
