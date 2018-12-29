@@ -268,12 +268,14 @@
                 }
                 [view setCardListener:self];
                 [boardView addSubview:view positioned:NSWindowAbove relativeTo:cards[column][row]];
+                [tempCells[clickedFreeCellIndex] setImage:nil];
             } else if (ret == 1) {
                 // nothing to move
             } else if (ret == -1) {
                 [self showIllegalMoveWarning];
+                [tempCells[clickedFreeCellIndex] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
             }
-            [tempCells[clickedFreeCellIndex] setImage:nil];
+            
             clickedFreeCellIndex = -1;
             isSelected = NO;
             [myGame deselectCard];
