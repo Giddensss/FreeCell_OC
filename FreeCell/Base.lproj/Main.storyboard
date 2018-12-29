@@ -869,9 +869,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="330" height="150"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7DQ-hc-iHy">
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7DQ-hc-iHy">
                                 <rect key="frame" x="14" y="83" width="302" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Move a single card" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dcM-vE-HNB">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system" size="18"/>
@@ -880,9 +879,8 @@
                                     <action selector="onMoveSingleCardBtnClicked:" target="wG3-30-oP2" id="u2s-P9-49U"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Asc-Mi-gDh">
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Asc-Mi-gDh">
                                 <rect key="frame" x="14" y="31" width="302" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Move whole list of cards" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gS2-Pk-LD0">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system" size="18"/>
@@ -892,6 +890,14 @@
                                 </connections>
                             </button>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="7DQ-hc-iHy" firstAttribute="top" secondItem="dMb-pK-kaQ" secondAttribute="top" constant="39" id="BzT-wG-fOP"/>
+                            <constraint firstItem="Asc-Mi-gDh" firstAttribute="top" secondItem="7DQ-hc-iHy" secondAttribute="bottom" constant="31" id="TSI-9O-OXV"/>
+                            <constraint firstItem="7DQ-hc-iHy" firstAttribute="leading" secondItem="dMb-pK-kaQ" secondAttribute="leading" constant="20" symbolic="YES" id="Uc3-1e-Tuf"/>
+                            <constraint firstItem="7DQ-hc-iHy" firstAttribute="leading" secondItem="Asc-Mi-gDh" secondAttribute="leading" id="XuR-E5-oZ8"/>
+                            <constraint firstAttribute="trailing" secondItem="7DQ-hc-iHy" secondAttribute="trailing" constant="20" symbolic="YES" id="sp9-ux-dRs"/>
+                            <constraint firstItem="7DQ-hc-iHy" firstAttribute="trailing" secondItem="Asc-Mi-gDh" secondAttribute="trailing" id="yIB-Kk-dHA"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <customObject id="BHE-pK-NDp" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

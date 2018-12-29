@@ -28,6 +28,7 @@
     NSMutableArray <NSButton *>*tempCells;
     NSMutableArray <NSButton *>*cells;
     NSMutableArray <NSMutableArray <CardView *> *> *cards;
+    NSMutableArray <EmptyCardView *> *emptyCards;
     AppDelegate *myDelegate;
     Game *myGame;
     
@@ -38,6 +39,7 @@
     int clickedRow;
     int clickedColumn;
     int clickedFreeCellIndex;
+    int clickedEmptyColumn;
     
 }
 @end
@@ -48,12 +50,7 @@
     if (self) {
         myDelegate = [NSApplication sharedApplication].delegate;
         myGame = myDelegate.myGame;
-        cards = [NSMutableArray array];
-        isSelected = NO;
-        isSelectMultiple = NO;
-        clickedRow = -1;
-        clickedColumn = -1;
-        clickedFreeCellIndex = -1;
+        [self initParameters];
     }
     return self;
 }
@@ -87,38 +84,7 @@
 #endif
     
     // setup baord;
-    NSArray *board = [myGame getBoard];
-    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
-    
-    int column = 0;
-    for (NSArray *cardColumn in board) {
-        NSMutableArray<CardView *> *temp = [NSMutableArray array];
-        for (int row = 0; row < cardColumn.count; row ++) {
-            if (row == 0) {
-                EmptyCardView *emptyCard = [[EmptyCardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
-                                                                                           boardView.frame.size.height - (card_height + row * card_vertical_overlap_gap),
-                                                                                           card_width,
-                                                                                           card_height)];
-                emptyCard.column = column;
-                emptyCard.clickListener = self;
-                [boardView addSubview:emptyCard];
-            }
-            CardView *card = [[CardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
-                                                                        boardView.frame.size.height - (card_height + row * card_vertical_overlap_gap),
-                                                                        card_width,
-                                                                        card_height)];
-            [card setCardViewWithValue:[cardColumn[row] getValue] suit:[cardColumn[row] getSuit] title:[cardColumn[row] getPrintableCardString]];
-            card.rowInBoard = row;
-            card.columnInBoard = column;
-            card.cardListener = self;
-            [temp addObject:card];
-            [boardView addSubview:card];
-             
-        }
-        [cards addObject:temp];
-        column ++;
-    }
-    
+    [self initBoardUI];
     [ChoicePickerView removeFromSuperview];
     [ChoicePickerView setFrame:CGRectMake((self.view.frame.size.width - choicePickerViewWidth) / 2,
                                           (self.view.frame.size.height - choicePickerViewHeight) / 2,
@@ -256,45 +222,8 @@
         }
     }
     
-    cards = [NSMutableArray array];
-    
-    NSArray *board = [myGame getBoard];
-    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
-    
-    int column = 0;
-    for (NSArray *cardColumn in board) {
-        NSMutableArray<CardView *> *temp = [NSMutableArray array];
-        for (int row = 0; row < cardColumn.count; row ++) {
-            if (row == 0) {
-                EmptyCardView *emptyCard = [[EmptyCardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
-                                                                                           boardView.frame.size.height - (card_height + row * card_vertical_overlap_gap),
-                                                                                           card_width,
-                                                                                           card_height)];
-                emptyCard.column = column;
-                emptyCard.clickListener = self;
-                [boardView addSubview:emptyCard];
-            }
-            CardView *card = [[CardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
-                                                                        boardView.frame.size.height - (card_height + row * card_vertical_overlap_gap),
-                                                                        card_width,
-                                                                        card_height)];
-            [card setCardViewWithValue:[cardColumn[row] getValue] suit:[cardColumn[row] getSuit] title:[cardColumn[row] getPrintableCardString]];
-            card.rowInBoard = row;
-            card.columnInBoard = column;
-            card.cardListener = self;
-            [temp addObject:card];
-            [boardView addSubview:card];
-            
-        }
-        [cards addObject:temp];
-        column ++;
-    }
-    
-    isSelected = NO;
-    isSelectMultiple = NO;
-    clickedRow = -1;
-    clickedColumn = -1;
-    clickedFreeCellIndex = -1;
+    [self initParameters];
+    [self initBoardUI];
     
     [ChoicePickerView removeFromSuperview];
     [ChoicePickerView setFrame:CGRectMake((self.view.frame.size.width - choicePickerViewWidth) / 2,
@@ -517,15 +446,38 @@
     clickedRow = cardPosition.y;
 }
 
-- (void) onViewClicked:(int)column {
+- (void) onViewClicked:(int)column sender:(EmptyCardView *)v{
 #if DEBUG_PRINT
     NSLog(@"Empty view is click");
 #endif
     if (isSelected) {
         if (isSelectMultiple) {
+            clickedEmptyColumn = column;
             [ChoicePickerView setHidden:NO];
         } else {
-            
+            if (clickedFreeCellIndex != -1) {
+                [myGame moveCardFromTempCellToGameBoardColumn:column];
+                [self addCardViewToEmptyColumn:column view:v];
+                [tempCells[clickedFreeCellIndex] setImage:nil];
+                clickedFreeCellIndex = -1;
+                isSelected = NO;
+            } else {
+                [myGame moveSingleCardFromColumn:clickedColumn toColumn:column];
+                [self addCardViewToEmptyColumn:column view:v];
+                int previousCount = (int)cards[clickedColumn].count;
+                [[cards[clickedColumn] lastObject] removeFromSuperview];
+                [cards[clickedColumn] removeLastObject];
+                if (previousCount > realignCardThreshold) {
+                    if (cards[clickedColumn].count == realignCardThreshold) {
+                        [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
+                    } else {
+                        [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
+                    }
+                }
+                clickedColumn = -1;
+                clickedRow = -1;
+                isSelected = NO;
+            }
         }
     }
 }
@@ -534,12 +486,79 @@
 #if DEBUG_PRINT
     NSLog(@"Move Whole list to the empty column");
 #endif
+    [ChoicePickerView setHidden:YES];
+    int cardsMoved = [myGame moveSelectedCardsToEmptyColumnFromColumn:clickedColumn toColumn:clickedEmptyColumn];
+#if DEBUG_PRINT
+    NSLog(@"Moving number of card %d",cardsMoved);
+#endif
+    [self deselectCardsAtColumn];
+    NSMutableArray <CardView *> *temp = [NSMutableArray array];
+    CGFloat verticalGap = card_vertical_overlap_gap;
+    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
+    if (cardsMoved > realignCardThreshold) verticalGap = (boardView.frame.size.height - card_height) / cardsMoved;
+    for (int i = 0; i < cardsMoved; i++) {
+        [temp addObject:cards[clickedColumn][cards[clickedColumn].count - i - 1]];
+        temp[i].columnInBoard = clickedEmptyColumn;
+        temp[i].rowInBoard = cardsMoved - i - 1; // temp array contains CardViews in a reversed order.
+#if DEBUG_PRINT
+        NSLog(@"laying CardView to %d,%d",clickedEmptyColumn,cardsMoved - i - 1);
+#endif
+        [temp[i] setFrame:CGRectMake((horizontal_gap + card_width) * clickedEmptyColumn,
+                                     boardView.frame.size.height - (card_height + temp[i].rowInBoard * verticalGap),
+                                     card_width,
+                                     card_height)];
+    }
+    for (int i = cardsMoved - 1; i >= 0; i --) {
+        [temp[i] removeFromSuperview];
+        if (i == cardsMoved - 1) {
+            [boardView addSubview:temp[i] positioned:NSWindowAbove relativeTo:emptyCards[clickedEmptyColumn]];
+        } else {
+            [boardView addSubview:temp[i] positioned:NSWindowAbove relativeTo:temp[i + 1]];
+        }
+    }
+    [cards[clickedEmptyColumn] addObjectsFromArray:temp];
+    int previousCount = (int)cards[clickedColumn].count;
+    [cards[clickedColumn] removeObjectsInArray:temp];
+    if (previousCount > realignCardThreshold) {
+        if (cards[clickedColumn].count == realignCardThreshold) {
+            [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
+        } else {
+            [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
+        }
+    }
+    
+    [myGame deselectCards];
+    clickedColumn = -1;
+    clickedRow = -1;
+    clickedEmptyColumn = -1;
+    isSelected = NO;
+
+    
 }
 
 - (void) onMoveSingleCardBtnClicked {
 #if DEBUG_PRINT
     NSLog(@"Move single card to the empty column");
 #endif
+    [ChoicePickerView setHidden:YES];
+    [self deselectCardsAtColumn];
+    [myGame moveSingleCardFromColumn:clickedColumn toColumn:clickedEmptyColumn];
+    [self addCardViewToEmptyColumn:clickedEmptyColumn view:emptyCards[clickedEmptyColumn]];
+    [myGame deselectCards];
+    int previousCount = (int)cards[clickedColumn].count;
+    [[cards[clickedColumn] lastObject] removeFromSuperview];
+    [cards[clickedColumn] removeLastObject];
+    if (previousCount > realignCardThreshold) {
+        if (cards[clickedColumn].count == realignCardThreshold) {
+            [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
+        } else {
+            [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
+        }
+    }
+    clickedColumn = -1;
+    clickedRow = -1;
+    clickedEmptyColumn = -1;
+    isSelected = NO;
 }
 
 - (void) onMouseClickedOnView {
@@ -552,7 +571,7 @@
 - (void) showIllegalMoveWarning {
     NSAlert *alert = [[NSAlert alloc] init];
     [alert setMessageText:@"Illega Move!"];
-    [alert setInformativeText:@"You cannot place this card here!"];
+    [alert setInformativeText:@"You cannot place card(s) here!"];
     [alert addButtonWithTitle:@"Got you"];
     [alert setIcon:[NSImage imageNamed:@"icon"]];
     [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:nil];
@@ -603,6 +622,67 @@
                                               boardView.frame.size.height - (card_height + i  * verticalGap),
                                               card_width, card_height)];
     }
+}
+
+- (void) addCardViewToEmptyColumn:(int) column view:(EmptyCardView *) v{
+#if DEBUG_PRINT
+    NSLog(@"Add new CardView to EmptyCardView at column %d",v.column);
+    NSLog(@"Frame: (%f,%f) %f x %f",v.frame.origin.x,v.frame.origin.y,v.frame.size.width,v.frame.size.height);
+#endif
+    CardView *view = [[CardView alloc] initWithFrame:v.frame];
+    view.columnInBoard = column;
+    view.rowInBoard = 0;
+    [view setCardViewWithValue:[[myGame getRealSelectedCard] getValue] suit:[[myGame getRealSelectedCard] getSuit] title:[[myGame getRealSelectedCard] getPrintableCardString]];
+    [view setCardListener: self];
+    [cards[column] addObject:view];
+    [boardView addSubview:view positioned:NSWindowAbove relativeTo:v];
+    [myGame deselectCard];
+}
+
+- (void) initBoardUI {
+    NSArray *board = [myGame getBoard];
+    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
+    
+    int column = 0;
+    for (NSArray *cardColumn in board) {
+        NSMutableArray<CardView *> *temp = [NSMutableArray array];
+        for (int row = 0; row < cardColumn.count; row ++) {
+            if (row == 0) {
+                EmptyCardView *emptyCard = [[EmptyCardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
+                                                                                           boardView.frame.size.height - (card_height + row * card_vertical_overlap_gap),
+                                                                                           card_width,
+                                                                                           card_height)];
+                emptyCard.column = column;
+                emptyCard.clickListener = self;
+                [boardView addSubview:emptyCard];
+                [emptyCards addObject:emptyCard];
+            }
+            CardView *card = [[CardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
+                                                                        boardView.frame.size.height - (card_height + row * card_vertical_overlap_gap),
+                                                                        card_width,
+                                                                        card_height)];
+            [card setCardViewWithValue:[cardColumn[row] getValue] suit:[cardColumn[row] getSuit] title:[cardColumn[row] getPrintableCardString]];
+            card.rowInBoard = row;
+            card.columnInBoard = column;
+            card.cardListener = self;
+            [temp addObject:card];
+            [boardView addSubview:card];
+            
+        }
+        [cards addObject:temp];
+        column ++;
+    }
+}
+
+- (void) initParameters {
+    cards = [NSMutableArray array];
+    emptyCards = [NSMutableArray array];
+    isSelected = NO;
+    isSelectMultiple = NO;
+    clickedRow = -1;
+    clickedColumn = -1;
+    clickedFreeCellIndex = -1;
+    clickedEmptyColumn = -1;
 }
 
 - (void)prepareForSegue:(NSStoryboardSegue *)segue sender:(id)sender {

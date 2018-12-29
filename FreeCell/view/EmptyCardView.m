@@ -32,7 +32,7 @@
 }
 
 - (void) mouseUp:(NSEvent *)event {
-    [_clickListener onViewClicked:_column];
+    [_clickListener onViewClicked:_column sender:self];
 }
 
 @end

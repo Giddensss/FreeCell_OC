@@ -54,7 +54,11 @@
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
+#if DEBUG_VIEW
+    [[NSColor lightGrayColor] set];
+#else
     [[NSColor clearColor] set];
+#endif
     NSRectFill(dirtyRect);
     
     // Drawing code here.

@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 @protocol EmptyCardCellClickListener <NSObject>
 
-- (void) onViewClicked:(int) column;
+- (void) onViewClicked:(int) column sender:(id) view;
 
 @end
 @interface EmptyCardView : NSView
