@@ -676,9 +676,11 @@
 - (void) checkGame:(enum gameStatus) status {
     switch (status) {
         case gameWin:
+            [self showGameWin];
             break;
-            
-        default:
+        case gamePlaying:
+            break;
+        case gameDeadEnd:
             break;
     }
 }

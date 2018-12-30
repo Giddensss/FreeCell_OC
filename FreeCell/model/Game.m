@@ -388,6 +388,9 @@
 
 - (BOOL) isGameWin {
     for (Card *c in decks) {
+#if DEBUG_PRINT
+        NSLog(@"Check game win: card in collection %@",[c getPrintableCardString]);
+#endif
         if ([c getValue] != 13) {
             return NO;
         }
