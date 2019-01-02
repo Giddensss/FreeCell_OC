@@ -265,7 +265,7 @@
                 [view setCardViewWithValue:[[myGame getRealSelectedCard] getValue] suit:[[myGame getRealSelectedCard] getSuit] title:[[myGame getRealSelectedCard] getPrintableCardString]];
                 [cards[column] addObject:view];
                 if (cards[column].count > realignCardThreshold) {
-                    [self alignCardNormal:cards[column] atColumn:column];
+                    [self alignCardBasedOnRow:cards[column] atColumn:column];
                 }
                 [view setCardListener:self];
                 [boardView addSubview:view positioned:NSWindowAbove relativeTo:cards[column][row]];
