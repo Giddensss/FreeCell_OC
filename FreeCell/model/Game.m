@@ -64,12 +64,14 @@
 
 - (BOOL) moveCardToTempCellAtColumn:(int)column toTempCellIndex:(int)index{
     if (![freeCells[index] isEmptyCard]) {
+        [_myUIListener onIllegalMove];
         return NO;
     }
     Card *card = [gameboard[column] lastObject];
     [gameboard[column] removeLastObject];
     lastRow[column] = [gameboard[column] lastObject] ? [gameboard[column] lastObject] : [[Card alloc] initEmptyCard];
     freeCells[index] = card;
+    [_myUIListener onCardMoveFromColumn:column toFreeCell:index card:[self getSelectedCard]];
 #if DEBUG_PRINT
     NSLog(@"Here is the cards in last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
@@ -103,25 +105,32 @@
         lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
         [gameboard[columnTo] addObject:fromC];
         lastRow[columnTo] = [gameboard[columnTo] lastObject] ? [gameboard[columnTo] lastObject] : [[Card alloc] initEmptyCard];
+        [_myUIListener onSingleCardMoveFromColumn:columnFrom toColumn:columnTo];
 #if DEBUG_PRINT
         NSLog(@"Here is the card column after card moved:\n%@",[self getPrintabeCardColumn:columnTo]);
         NSLog(@"Here is the last row of the board:\n%@",[self getPrintableCardInLastRow]);
 #endif
         return YES;
     } else {
+        [_myUIListener onIllegalMove];
         return NO;
     }
 }
 
-- (int) moveMultipleCardFromColumn:(int)columnFrom toColumn:(int)columnTo {
+- (int) moveMultipleCardFromColumn:(int)columnFrom fromRow:(int)row toColumn:(int)columnTo{
     Card *c = [gameboard[columnTo] lastObject];
-    if ([selectedCards[0] getValue] + 1  != [c getValue] || [selectedCards[0] getCardColor] == [c getCardColor]) return -1;
+    if ([selectedCards[0] getValue] + 1  != [c getValue] || [selectedCards[0] getCardColor] == [c getCardColor])
+    {
+        [_myUIListener onIllegalMove];
+        return -1;
+    }
     if (![self checkFreeCells:selectedCards]) return -2;
     [gameboard[columnTo] addObjectsFromArray:selectedCards];
     lastRow[columnTo] = [gameboard[columnTo] lastObject] ? [gameboard[columnTo] lastObject] : [[Card alloc] initEmptyCard];
     [gameboard[columnFrom] removeObjectsInArray:selectedCards];
     lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
     [self deselectCards];
+    [_myUIListener onMultipleCardsMoveFromColumn: columnFrom fromRow:row toColumn:columnTo];
 #if DEBUG_PRINT
     NSLog(@"Cards move from column:\n%@",[self getPrintabeCardColumn:columnFrom]);
     NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
@@ -140,6 +149,7 @@
             decks[index] = card;
             [gameboard[columnFrom] removeLastObject];
             lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
+            [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getSelectedCard]];
             return YES;
         } else {
             return NO;
@@ -155,6 +165,7 @@
             decks[index] = card;
             [gameboard[columnFrom] removeLastObject];
             lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
+            [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getSelectedCard]];
             return YES;
         } else {
             return NO;

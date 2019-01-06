@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Card.h"
+#import "../listener+callback/MoveCardUIListener.h"
 
 NS_ASSUME_NONNULL_BEGIN
 enum gameStatus{
@@ -16,6 +17,8 @@ enum gameStatus{
     gameDeadEnd,
 };
 @interface Game : NSObject
+
+@property id<MoveCardUIListener> myUIListener;
 
 - (void) setupGame;
 
@@ -50,10 +53,12 @@ enum gameStatus{
  *                             1. Nothing to move
  *                            -1. Invalid move
  *                            -2. No enough free cells
+ * @param columnFrom: the column from which the selected cards currently are
+ * @param rowFrom: the row from which the selected cards are
  * @param columnTo: the target column
  *
  */
-- (int) moveMultipleCardFromColumn:(int) columnFrom toColumn:(int) columnTo;
+- (int) moveMultipleCardFromColumn:(int) columnFrom fromRow:(int) row toColumn:(int) columnTo;
 
 - (BOOL) moveCardToCollectionFromColumn:(int) columnFrom toCollectionIndex:(int) index;
 

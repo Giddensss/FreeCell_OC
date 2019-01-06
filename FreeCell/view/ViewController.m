@@ -50,6 +50,7 @@
     if (self) {
         myDelegate = [NSApplication sharedApplication].delegate;
         myGame = myDelegate.myGame;
+        myGame.myUIListener = self;
         [self initParameters];
     }
     return self;
@@ -127,31 +128,13 @@
                 return;
             }
             BOOL flag = [myGame moveCardToTempCellAtColumn:clickedColumn toTempCellIndex:index];
-            if (flag) {
-                [[cards[clickedColumn] lastObject] removeFromSuperview];
-                int previousCount = (int)cards[clickedColumn].count;
-                [cards[clickedColumn] removeLastObject];
-                if (previousCount > realignCardThreshold) {
-                    if (cards[clickedColumn].count == realignCardThreshold) {
-                        [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
-                    } else {
-                        [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
-                    }
-                }
-                [sender setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
-                [myGame deselectCard];
-                clickedColumn = -1;
-                clickedRow = -1;
-                isSelected = NO;
-            } else {
-                [self showIllegalMoveWarning];
-                [myGame deselectCard];
+            [myGame deselectCard];
+            if (!flag) {
                 [cards[clickedColumn][clickedRow] deselectCard];
-                clickedColumn = -1;
-                clickedRow = -1;
-                isSelected = NO;
-                return;
             }
+            clickedColumn = -1;
+            clickedRow = -1;
+            isSelected = NO;
         } else {
 #if DEBUG_PRINT
             NSLog(@"Select card at free cell index: %d",index);
@@ -178,15 +161,6 @@
                 clickedFreeCellIndex = -1;
                 isSelected = NO;
             } else if ([myGame moveCardToCollectionFromColumn:clickedColumn toCollectionIndex:index]) {
-                [sender setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
-                [[cards[clickedColumn] lastObject] removeFromSuperview];
-                [cards[clickedColumn] removeLastObject];
-                if (cards[clickedColumn].count > realignCardThreshold) {
-                    [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
-                } else {
-                    [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
-                }
-                [myGame deselectCard];
                 clickedColumn = -1;
                 clickedRow = -1;
                 isSelected = NO;
@@ -299,111 +273,23 @@
             // move card(s)
             if (isSelectMultiple) {
                 // move a list of cards
-                int ret = [myGame moveMultipleCardFromColumn:clickedColumn toColumn:column];
-                if (ret == 0) {
-                    // sucessful
-                    NSArray *temp = [cards[clickedColumn] subarrayWithRange:NSMakeRange(clickedRow, cards[clickedColumn].count - clickedRow)];
-#if DEBUG_PRINT
-                    NSLog(@"length of card to move: %ld",temp.count);
-#endif
-                    int previousCount = (int)cards[clickedColumn].count;
-                    // move the card view first, then adjust the gap between cards
-                    for (int i = 0; i < temp.count; i ++) {
-                        CardView *view = temp[i];
-                        [view deselectCard];
-                        view.columnInBoard = column;
-                        view.rowInBoard = row + i + 1;
-                        [view removeFromSuperview];
-                        [boardView addSubview:view positioned:NSWindowAbove relativeTo:[cards[column] lastObject]];
-                        [cards[column] addObject:view];
-                        [cards[clickedColumn] removeLastObject];
-                        
-                    }
-                    if (cards[column].count > realignCardThreshold) {
-                        [self alignCardBasedOnRow:cards[column] atColumn:column];
-                    } else {
-                        [self alignCardNormal:cards[column] atColumn:column];
-                    }
-                    
-                    if (previousCount > realignCardThreshold) {
-                        if (cards[clickedColumn].count <= realignCardThreshold) {
-                            [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
-                        } else {
-                            [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
-                        }
-                    }
-                    
-                    
-                } else if (ret == 1) {
+                int ret = [myGame moveMultipleCardFromColumn:clickedColumn fromRow:clickedRow toColumn:column];
+                if (ret != 0) {
                     // nothing to move
                     [self deselectCardsAtColumn];
-                } else if (ret == -1) {
-                    // invalid move
-                    [self deselectCardsAtColumn];
-                    [self showIllegalMoveWarning];
-                } else if (ret == -2) {
-                    // no enough free cells
-                    [self deselectCardsAtColumn];
-                }
+                } 
                 clickedColumn = -1;
                 clickedRow = -1;
                 isSelected = NO;
                 isSelectMultiple = NO;
             } else {
                 // move single card
-                if ([myGame moveSingleCardFromColumn:clickedColumn toColumn:column]) {
-                    CardView *view = cards[clickedColumn][clickedRow];
-                    [cards[column] addObject:view];
-                    view.columnInBoard = column;
-                    view.rowInBoard = row + 1;
-                    [cards[clickedColumn][clickedRow] deselectCard];
-                    int previousCount = (int)cards[clickedColumn].count;
-                    [cards[clickedColumn] removeLastObject];
-                    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
-                    CGFloat startY = boardView.frame.size.height - (card_height + (row + 1) * card_vertical_overlap_gap);
-                    // check to column alignment
-                    if (cards[column].count >= realignCardThreshold) {
-#if DEBUG_PRINT
-                        NSLog(@"Moving single card needs to realign the cards");
-#endif
-                        [self alignCardBasedOnRow:cards[column] atColumn:column];
-                        
-                    } else {
-                        [view setFrame:CGRectMake((horizontal_gap + card_width) * column,
-                                                  startY,
-                                                  card_width,
-                                                  card_height)];
-                    }
-                    
-                    
-                    [view removeFromSuperview];
-                    [boardView addSubview:view positioned:NSWindowAbove relativeTo:cards[column][row]];
-                    
-                    isSelected = NO;
-                    [myGame deselectCard];
-                    
-                    
-                    // check from column alignment
-                    if (previousCount > realignCardThreshold) {
-                        if (cards[clickedColumn].count == realignCardThreshold) {
-#if DEBUG_PRINT
-                            NSLog(@"The from column needs to realign the cards back to normal");
-#endif
-                            [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
-                        } else {
-#if DEBUG_PRINT
-                            NSLog(@"The from column needs to realign the cards based on rows");
-#endif
-                            [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
-                        }
-                    }
-                    clickedRow = -1;
-                    clickedColumn = -1;
-                    return;
-                }
+                BOOL flag = [myGame moveSingleCardFromColumn:clickedColumn toColumn:column];
                 isSelected = NO;
                 [myGame deselectCard];
-                [cards[clickedColumn][clickedRow] deselectCard];
+                if (!flag) {
+                    [cards[clickedColumn][clickedRow] deselectCard];
+                }
                 clickedRow = -1;
                 clickedColumn = -1;
                 
@@ -444,7 +330,6 @@
     int row = cardPosition.y;
     if (row < cards[column].count - 1) {
         CardView *view = cards[column][row];
-        //[view removeFromSuperview];
         [boardView addSubview:view];
         [view becomeFirstResponder];
     }
@@ -479,10 +364,7 @@
                 isSelected = NO;
             } else {
                 [myGame moveSingleCardFromColumn:clickedColumn toColumn:column];
-                [self addCardViewToEmptyColumn:column view:v];
                 int previousCount = (int)cards[clickedColumn].count;
-                [[cards[clickedColumn] lastObject] removeFromSuperview];
-                [cards[clickedColumn] removeLastObject];
                 if (previousCount > realignCardThreshold) {
                     if (cards[clickedColumn].count == realignCardThreshold) {
                         [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
@@ -536,7 +418,7 @@
     int previousCount = (int)cards[clickedColumn].count;
     [cards[clickedColumn] removeObjectsInArray:temp];
     if (previousCount > realignCardThreshold) {
-        if (cards[clickedColumn].count == realignCardThreshold) {
+        if (cards[clickedColumn].count <= realignCardThreshold) {
             [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
         } else {
             [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
@@ -559,11 +441,8 @@
     [ChoicePickerView setHidden:YES];
     [self deselectCardsAtColumn];
     [myGame moveSingleCardFromColumn:clickedColumn toColumn:clickedEmptyColumn];
-    [self addCardViewToEmptyColumn:clickedEmptyColumn view:emptyCards[clickedEmptyColumn]];
     [myGame deselectCards];
     int previousCount = (int)cards[clickedColumn].count;
-    [[cards[clickedColumn] lastObject] removeFromSuperview];
-    [cards[clickedColumn] removeLastObject];
     if (previousCount > realignCardThreshold) {
         if (cards[clickedColumn].count == realignCardThreshold) {
             [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
@@ -645,6 +524,13 @@
                                                      boardView.frame.size.height - (card_height + i * card_vertical_overlap_gap),
                                                      card_width,
                                                      card_height)];
+        if (i > 0) {
+            [c[i] removeFromSuperview];
+            [boardView addSubview:c[i] positioned:NSWindowAbove relativeTo:c[i-1]];
+        } else if (i == 0) {
+            [c[i] removeFromSuperview];
+            [boardView addSubview:c[i] positioned:NSWindowAbove relativeTo:emptyCards[column]];
+        }
     }
 }
 
@@ -652,9 +538,16 @@
     CGFloat verticalGap = (boardView.frame.size.height - card_height) / c.count;
     CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
     for (int i = 0; i < cards[column].count; i++) {
-        [cards[column][i] setFrame:CGRectMake((horizontal_gap + card_width) * column,
+        [c[i] setFrame:CGRectMake((horizontal_gap + card_width) * column,
                                               boardView.frame.size.height - (card_height + i  * verticalGap),
                                               card_width, card_height)];
+        if (i > 0) {
+            [c[i] removeFromSuperview];
+            [boardView addSubview:c[i] positioned:NSWindowAbove relativeTo:c[i-1]];
+        } else if (i == 0) {
+            [c[i] removeFromSuperview];
+            [boardView addSubview:c[i] positioned:NSWindowAbove relativeTo:emptyCards[column]];
+        }
     }
 }
 
@@ -739,4 +632,89 @@
     }
 }
 
+- (void) onSingleCardMoveFromColumn:(int)columnFrom toColumn:(int)columnTo {
+    CardView *movingCard = [cards[columnFrom] lastObject];
+    [movingCard deselectCard];
+    movingCard.columnInBoard = columnTo;
+    movingCard.rowInBoard = (int) cards[columnTo].count;
+    [cards[columnTo] addObject:movingCard];
+    if (cards[columnTo].count > realignCardThreshold) {
+        [self alignCardBasedOnRow:cards[columnTo] atColumn:columnTo];
+    } else {
+        [self alignCardNormal:cards[columnTo] atColumn:columnTo];
+    }
+    int previousCount = (int)cards[columnFrom].count;
+    [cards[columnFrom] removeLastObject];
+    if (previousCount > realignCardThreshold) {
+        if (cards[columnFrom].count == realignCardThreshold) {
+            [self alignCardNormal:cards[columnFrom] atColumn:columnFrom];
+        } else {
+            [self alignCardBasedOnRow:cards[columnTo] atColumn:columnTo];
+        }
+    }
+}
+
+- (void) onMultipleCardsMoveFromColumn:(int)columnFrom fromRow:(int)rowFrom toColumn:(int)columnTo {
+    NSArray *temp = [cards[columnFrom] subarrayWithRange:NSMakeRange(rowFrom, cards[columnFrom].count - rowFrom)];
+#if DEBUG_PRINT
+    NSLog(@"length of card to move: %ld",temp.count);
+#endif
+    int previousCount = (int)cards[columnFrom].count;
+    // move the card view first, then adjust the gap between cards
+    for (int i = 0; i < temp.count; i ++) {
+        CardView *view = temp[i];
+        [view deselectCard];
+        view.columnInBoard = columnTo;
+        view.rowInBoard = (int)cards[columnTo].count;
+        [view removeFromSuperview];
+        [cards[columnTo] addObject:view];
+        [cards[columnFrom] removeLastObject];
+        
+    }
+    if (cards[columnTo].count > realignCardThreshold) {
+        [self alignCardBasedOnRow:cards[columnTo] atColumn:columnTo];
+    } else {
+        [self alignCardNormal:cards[columnTo] atColumn:columnTo];
+    }
+    
+    if (previousCount > realignCardThreshold) {
+        if (cards[columnFrom].count <= realignCardThreshold) {
+            [self alignCardNormal:cards[columnFrom] atColumn:columnFrom];
+        } else {
+            [self alignCardBasedOnRow:cards[columnFrom] atColumn:columnFrom];
+        }
+    }
+}
+
+
+- (void) onCardMoveFromColumn:(int)column toFreeCell:(int)index card:(NSString *)card{
+    [tempCells[index] setImage:[NSImage imageNamed:card]];
+    int previousCount = (int)cards[column].count;
+    [[cards[column] lastObject] removeFromSuperview];
+    [cards[column] removeLastObject];
+    if (previousCount > realignCardThreshold) {
+        if (cards[column].count == realignCardThreshold) {
+            [self alignCardNormal:cards[column] atColumn:column];
+        } else {
+            [self alignCardBasedOnRow:cards[column] atColumn:column];
+        }
+    }
+}
+
+- (void) onCardMoveFromColumn:(int)columnFrom toCollectionIndex:(int)index card:(NSString *) card{
+    [cells[index] setImage:[NSImage imageNamed:card]];
+    [[cards[columnFrom] lastObject] removeFromSuperview];
+    [cards[columnFrom] removeLastObject];
+    if (cards[columnFrom].count > realignCardThreshold) {
+        [self alignCardBasedOnRow:cards[columnFrom] atColumn:columnFrom];
+    } else if (cards[columnFrom].count == realignCardThreshold){
+        [self alignCardNormal:cards[columnFrom] atColumn:columnFrom];
+    }
+    [myGame deselectCard];
+    
+}
+
+- (void) onIllegalMove {
+    [self showIllegalMoveWarning];
+}
 @end
