@@ -6,6 +6,7 @@
 //  Copyright © 2019 Alan L  Hamilton. All rights reserved.
 //
 
+#import "../supports/const.h"
 #ifndef MoveCardUIListener_h
 #define MoveCardUIListener_h
 
@@ -22,6 +23,8 @@
 - (void) onIllegalMove;
 
 - (void) onGameRest;
+
+- (void) checkGame:(enum gameStatus) status;
 
 @end
 #endif /* MoveCardUIListener_h */

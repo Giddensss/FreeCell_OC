@@ -23,6 +23,12 @@ enum CardColor{
     cardColorRed
 };
 
+enum gameStatus{
+    gameWin,
+    gamePlaying,
+    gameDeadEnd,
+};
+
 // const for the game
 const static int deckLength = 52; // Theres no Jokers in the deck.
 const static int number_of_temp_cells = 4;

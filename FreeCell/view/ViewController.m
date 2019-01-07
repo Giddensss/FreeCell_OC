@@ -157,7 +157,7 @@
                 if ([myGame moveSelectedCardToCollection:index]) {
                     [cells[index] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
                     [myGame deselectCard];
-                    [self checkGame:[myGame checkGame]];
+                    //[self checkGame:[myGame checkGame]];
                 }
                 [tempCells[clickedFreeCellIndex] setImage:nil];
                 clickedFreeCellIndex = -1;
@@ -166,7 +166,7 @@
                 clickedColumn = -1;
                 clickedRow = -1;
                 isSelected = NO;
-                [self checkGame:[myGame checkGame]];
+                //[self checkGame:[myGame checkGame]];
             } else {
                 if (isSelectMultiple) {
                     [myGame deselectCards];

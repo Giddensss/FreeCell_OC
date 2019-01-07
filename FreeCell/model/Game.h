@@ -11,11 +11,6 @@
 #import "../listener+callback/UIListener.h"
 
 NS_ASSUME_NONNULL_BEGIN
-enum gameStatus{
-    gameWin,
-    gamePlaying,
-    gameDeadEnd,
-};
 @interface Game : NSObject
 
 @property id<UIListener> myUIListener;
@@ -87,8 +82,6 @@ enum gameStatus{
 - (void) deselectCards;
 
 - (void) resetGame;
-
-- (enum gameStatus) checkGame;
 
 - (void) autoFinish;
 @end

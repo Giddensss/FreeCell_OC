@@ -154,6 +154,7 @@
             [gameboard[columnFrom] removeLastObject];
             lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
             [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getCardImageName:card]];
+            [self checkGame];
             return YES;
         } else {
             return NO;
@@ -170,6 +171,7 @@
             [gameboard[columnFrom] removeLastObject];
             lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
             [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getCardImageName:card]];
+            [self checkGame];
             return YES;
         } else {
             return NO;
@@ -182,6 +184,7 @@
         decks[index] = selectedCard;
         freeCells[[freeCells indexOfObject:selectedCard]] = [[Card alloc] initEmptyCard];
         [self autoFinish:NO];
+        [self checkGame];
         return YES;
     } else {
         Card *temp = decks[index];
@@ -192,6 +195,7 @@
             decks[index] = selectedCard;
             freeCells[[freeCells indexOfObject:selectedCard]] = [[Card alloc] initEmptyCard];
             [self autoFinish:NO];
+            [self checkGame];
             return YES;
         } else {
             return NO;
@@ -300,13 +304,13 @@
     [_myUIListener onGameRest];
 }
 
-- (enum gameStatus) checkGame {
+- (void) checkGame {
     if ([self isGameWin]) {
-        return gameWin;
+        [_myUIListener checkGame:gameWin];
     } else if ([self checkDeadEnd]){
-        return gameDeadEnd;
+        [_myUIListener checkGame:gameDeadEnd];
     } else {
-        return gamePlaying;
+        [_myUIListener checkGame:gamePlaying];
     }
 }
 
@@ -438,7 +442,7 @@
         NSLog(@"=====================");
 #endif
         Card *temp = lastRow[i];
-        if (!isForce && temp.getValue >= auto_finish_card_value_threshold) continue;
+        if ((!isForce && temp.getValue >= auto_finish_card_value_threshold) || temp == nil) continue;
         for (int j = 0; j < 4; j++) {
             BOOL flag = [self moveCardToCollectionFromColumn:i toCollectionIndex:j];
             
