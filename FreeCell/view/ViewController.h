@@ -11,8 +11,8 @@
 #import "CardView.h"
 #import "EmptyCardView.h"
 #import "ChoicePickerViewController.h"
-#import "../listener+callback/MoveCardUIListener.h"
-@interface ViewController : NSViewController <MouseDirectionListener,CardViewClickListener,EmptyCardCellClickListener,ChoiceViewControllerBtnListener,MoveCardUIListener>
+#import "../listener+callback/UIListener.h"
+@interface ViewController : NSViewController <MouseDirectionListener,CardViewClickListener,EmptyCardCellClickListener,ChoiceViewControllerBtnListener,UIListener>
 
 
 @end

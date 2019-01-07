@@ -30,9 +30,9 @@
                                     </items>
                                 </menu>
                             </menuItem>
-                            <menuItem title="File" id="dMs-cI-mzQ">
+                            <menuItem title="Game" id="dMs-cI-mzQ">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="File" id="bib-Uj-vzu">
+                                <menu key="submenu" title="Game" id="bib-Uj-vzu">
                                     <items>
                                         <menuItem title="New Game" id="Was-JA-tGl">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -92,9 +92,9 @@
                                 </items>
                             </menu>
                         </menuItem>
-                        <menuItem title="File" id="nNt-aO-5O7">
+                        <menuItem title="Game" id="nNt-aO-5O7">
                             <modifierMask key="keyEquivalentModifierMask"/>
-                            <menu key="submenu" title="File" id="EVD-Tn-SgW">
+                            <menu key="submenu" title="Game" id="EVD-Tn-SgW">
                                 <items>
                                     <menuItem title="New Game" id="HqB-QL-9V6">
                                         <modifierMask key="keyEquivalentModifierMask"/>

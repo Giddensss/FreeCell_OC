@@ -43,7 +43,7 @@
 		E792E53121D664BD0092BBDC /* ChoicePickerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChoicePickerView.h; sourceTree = "<group>"; };
 		E792E53221D664BD0092BBDC /* ChoicePickerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChoicePickerView.m; sourceTree = "<group>"; };
 		E792E53421D777740092BBDC /* GameListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameListener.h; sourceTree = "<group>"; };
-		E792E53521E097730092BBDC /* MoveCardUIListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoveCardUIListener.h; sourceTree = "<group>"; };
+		E792E53521E097730092BBDC /* UIListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIListener.h; sourceTree = "<group>"; };
 		E792E53621E336B70092BBDC /* MainMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainMenu.h; sourceTree = "<group>"; };
 		E792E53721E336B70092BBDC /* MainMenu.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainMenu.m; sourceTree = "<group>"; };
 		E7A7EE4B2175C950008379A1 /* Free Cell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Free Cell.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,7 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				E792E53421D777740092BBDC /* GameListener.h */,
-				E792E53521E097730092BBDC /* MoveCardUIListener.h */,
+				E792E53521E097730092BBDC /* UIListener.h */,
 			);
 			path = "listener+callback";
 			sourceTree = "<group>";

@@ -70,12 +70,14 @@
         [button setTarget:self];
         [button setAction:@selector(topCellBtnClicked:)];
         [button setHighlighted:NO];
+        [button setRefusesFirstResponder:YES];
         [(NSButtonCell *)button.cell setHighlightsBy:NSNoCellMask];
         NSButton *cellBtn = cells[i];
         cellBtn.accessibilityTitle = [NSString stringWithFormat:@"cell%d",i];
         [cellBtn setTarget:self];
         [cellBtn setAction:@selector(topCellBtnClicked:)];
         [cellBtn setHighlighted:NO];
+        [cellBtn setRefusesFirstResponder:YES];
         [(NSButtonCell *)cellBtn.cell setHighlightsBy:NSNoCellMask];
     }
     
@@ -187,26 +189,6 @@
     NSLog(@"Indicator Clicked");
 #endif
     [myGame resetGame];
-    for (int i = 0; i < tempCells.count; i ++ ) {
-        [tempCells[i] setImage:nil];
-        [cells[i] setImage:nil];
-    }
-    
-    for (NSArray <CardView *> *c in cards) {
-        for (CardView *view in c) {
-            [view removeFromSuperview];
-        }
-    }
-    
-    [self initParameters];
-    [self initBoardUI];
-    
-    [ChoicePickerView removeFromSuperview];
-    [ChoicePickerView setFrame:CGRectMake((self.view.frame.size.width - choicePickerViewWidth) / 2,
-                                          (self.view.frame.size.height - choicePickerViewHeight) / 2,
-                                          choicePickerViewWidth, choicePickerViewHeight)];
-    [self.view addSubview:ChoicePickerView];
-    [ChoicePickerView setHidden:YES];
 }
 
 - (void) onMouseInWindowPositionChanged:(enum mouseInWindow)position {
@@ -702,7 +684,6 @@
 }
 
 - (void) onCardMoveFromColumn:(int)columnFrom toCollectionIndex:(int)index card:(NSString *) card{
-    NSLog(@"%@",card);
     [cells[index] setImage:[NSImage imageNamed:card]];
     [[cards[columnFrom] lastObject] removeFromSuperview];
     [cards[columnFrom] removeLastObject];
@@ -717,5 +698,28 @@
 
 - (void) onIllegalMove {
     [self showIllegalMoveWarning];
+}
+
+- (void) onGameRest {
+    for (int i = 0; i < tempCells.count; i ++ ) {
+        [tempCells[i] setImage:nil];
+        [cells[i] setImage:nil];
+    }
+    
+    for (NSArray <CardView *> *c in cards) {
+        for (CardView *view in c) {
+            [view removeFromSuperview];
+        }
+    }
+    
+    [self initParameters];
+    [self initBoardUI];
+    
+    [ChoicePickerView removeFromSuperview];
+    [ChoicePickerView setFrame:CGRectMake((self.view.frame.size.width - choicePickerViewWidth) / 2,
+                                          (self.view.frame.size.height - choicePickerViewHeight) / 2,
+                                          choicePickerViewWidth, choicePickerViewHeight)];
+    [self.view addSubview:ChoicePickerView];
+    [ChoicePickerView setHidden:YES];
 }
 @end

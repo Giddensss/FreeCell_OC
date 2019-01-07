@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Card.h"
-#import "../listener+callback/MoveCardUIListener.h"
+#import "../listener+callback/UIListener.h"
 
 NS_ASSUME_NONNULL_BEGIN
 enum gameStatus{
@@ -18,7 +18,7 @@ enum gameStatus{
 };
 @interface Game : NSObject
 
-@property id<MoveCardUIListener> myUIListener;
+@property id<UIListener> myUIListener;
 
 - (void) setupGame;
 

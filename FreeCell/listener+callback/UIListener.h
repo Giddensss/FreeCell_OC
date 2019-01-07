@@ -9,7 +9,7 @@
 #ifndef MoveCardUIListener_h
 #define MoveCardUIListener_h
 
-@protocol MoveCardUIListener <NSObject>
+@protocol UIListener <NSObject>
 
 - (void) onSingleCardMoveFromColumn:(int) columnFrom toColumn:(int) columnTo;
 
@@ -20,6 +20,8 @@
 - (void) onCardMoveFromColumn:(int) columnFrom toCollectionIndex:(int) index card:(NSString *) card;
 
 - (void) onIllegalMove;
+
+- (void) onGameRest;
 
 @end
 #endif /* MoveCardUIListener_h */

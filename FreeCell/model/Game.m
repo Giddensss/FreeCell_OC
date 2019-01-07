@@ -297,6 +297,7 @@
     freeCells = [NSMutableArray array];
     decks = [NSMutableArray array];
     [self setupGame];
+    [_myUIListener onGameRest];
 }
 
 - (enum gameStatus) checkGame {
@@ -431,7 +432,7 @@
 
 - (void) autoFinish:(BOOL) isForce {
     for (int i = 0; i < number_of_column; i ++) {
-#if DEBUG_PRINT
+#if AUTO_FINISH_PRINT
         NSLog(@"=====================");
         NSLog(@"autoFinish column %d",i);
         NSLog(@"=====================");
@@ -443,7 +444,7 @@
             
             if (flag) {
                 [self autoFinish:isForce];
-#if DEBUG_PRINT
+#if AUTO_FINISH_PRINT
                 NSLog(@"=====================================");
                 NSLog(@"Collect card at column %d to cell %d",i,j);
                 NSLog(@"=====================================");

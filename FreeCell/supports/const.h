@@ -10,7 +10,7 @@
 #define const_h
 #define DEBUG_PRINT 1
 #define DEBUG_VIEW 0
-
+#define AUTO_FINISH_PRINT 0
 enum CardSuit{
     suitSpade,
     suitHeart,
@@ -39,5 +39,5 @@ const static CGFloat choicePickerViewWidth = 330.0f;
 const static CGFloat choicePickerViewHeight = 150.0f;
 
 // other constants
-const static int auto_finish_card_value_threshold = 3;
+const static int auto_finish_card_value_threshold = 4;
 #endif /* const_h */
