@@ -702,6 +702,7 @@
 }
 
 - (void) onCardMoveFromColumn:(int)columnFrom toCollectionIndex:(int)index card:(NSString *) card{
+    NSLog(@"%@",card);
     [cells[index] setImage:[NSImage imageNamed:card]];
     [[cards[columnFrom] lastObject] removeFromSuperview];
     [cards[columnFrom] removeLastObject];

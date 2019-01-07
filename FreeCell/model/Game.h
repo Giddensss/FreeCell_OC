@@ -88,8 +88,9 @@ enum gameStatus{
 
 - (void) resetGame;
 
-
 - (enum gameStatus) checkGame;
+
+- (void) autoFinish;
 @end
 
 NS_ASSUME_NONNULL_END

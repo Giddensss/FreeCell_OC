@@ -37,4 +37,7 @@ const static CGFloat card_width = 111.0f;
 const static CGFloat card_height = 166.0f;
 const static CGFloat choicePickerViewWidth = 330.0f;
 const static CGFloat choicePickerViewHeight = 150.0f;
+
+// other constants
+const static int auto_finish_card_value_threshold = 3;
 #endif /* const_h */

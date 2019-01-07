@@ -75,6 +75,7 @@
 #if DEBUG_PRINT
     NSLog(@"Here is the cards in last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+    [self autoFinish:NO];
     return YES;
 }
 
@@ -90,6 +91,7 @@
 #if DEBUG_PRINT
         NSLog(@"Here is the cards in last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+        [self autoFinish:NO];
         return 0;
     } else {
         return -1;
@@ -110,6 +112,7 @@
         NSLog(@"Here is the card column after card moved:\n%@",[self getPrintabeCardColumn:columnTo]);
         NSLog(@"Here is the last row of the board:\n%@",[self getPrintableCardInLastRow]);
 #endif
+        [self autoFinish:NO];
         return YES;
     } else {
         [_myUIListener onIllegalMove];
@@ -136,6 +139,7 @@
     NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
     NSLog(@"Last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+    [self autoFinish:NO];
     return 0;
 }
 
@@ -149,7 +153,7 @@
             decks[index] = card;
             [gameboard[columnFrom] removeLastObject];
             lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
-            [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getSelectedCard]];
+            [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getCardImageName:card]];
             return YES;
         } else {
             return NO;
@@ -165,7 +169,7 @@
             decks[index] = card;
             [gameboard[columnFrom] removeLastObject];
             lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
-            [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getSelectedCard]];
+            [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getCardImageName:card]];
             return YES;
         } else {
             return NO;
@@ -177,6 +181,7 @@
     if ([selectedCard getValue] == 1 && [decks[index] isEmptyCard]) {
         decks[index] = selectedCard;
         freeCells[[freeCells indexOfObject:selectedCard]] = [[Card alloc] initEmptyCard];
+        [self autoFinish:NO];
         return YES;
     } else {
         Card *temp = decks[index];
@@ -186,6 +191,7 @@
         if ([temp getValue] + 1 == [selectedCard getValue] && [temp getSuit] == [selectedCard getSuit]) {
             decks[index] = selectedCard;
             freeCells[[freeCells indexOfObject:selectedCard]] = [[Card alloc] initEmptyCard];
+            [self autoFinish:NO];
             return YES;
         } else {
             return NO;
@@ -210,6 +216,7 @@
         NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
         NSLog(@"Last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+        [self autoFinish:NO];
         return cardsToMove;
     } else {
         NSArray <Card *> *temp = [selectedCards subarrayWithRange:NSMakeRange(selectedCards.count - freeCellCount, freeCellCount)];
@@ -223,6 +230,7 @@
         NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
         NSLog(@"Last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+        [self autoFinish:NO];
         return freeCellCount;
     }
 
@@ -299,6 +307,10 @@
     } else {
         return gamePlaying;
     }
+}
+
+- (void) autoFinish {
+    [self autoFinish:YES];
 }
 
 /********************************* HELP METHOD ***************************************/
@@ -411,6 +423,34 @@
 
 - (BOOL) checkDeadEnd {
     return NO;
+}
+
+- (NSString *) getCardImageName:(Card *) card {
+    return [NSString stringWithFormat:@"card_%d_%d",[card getValue],[card getSuit]];
+}
+
+- (void) autoFinish:(BOOL) isForce {
+    for (int i = 0; i < number_of_column; i ++) {
+#if DEBUG_PRINT
+        NSLog(@"=====================");
+        NSLog(@"autoFinish column %d",i);
+        NSLog(@"=====================");
+#endif
+        Card *temp = lastRow[i];
+        if (!isForce && temp.getValue >= auto_finish_card_value_threshold) continue;
+        for (int j = 0; j < 4; j++) {
+            BOOL flag = [self moveCardToCollectionFromColumn:i toCollectionIndex:j];
+            
+            if (flag) {
+                [self autoFinish:isForce];
+#if DEBUG_PRINT
+                NSLog(@"=====================================");
+                NSLog(@"Collect card at column %d to cell %d",i,j);
+                NSLog(@"=====================================");
+#endif
+            }
+        }
+    }
 }
 
 /********************************* PRINT METHODS ***************************************/
