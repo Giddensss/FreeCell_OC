@@ -210,29 +210,34 @@
     int row = cardPosition.y;
     if (isSelected) {
         if (clickedColumn == -1 && clickedRow == -1) {
-            int ret = [myGame moveCardFromTempCellToGameBoardColumn:column];
-            if (ret == 0) {
-                // successful
-                CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
-                CardView *view = [[CardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
-                                                                            boardView.frame.size.height - (card_height + (row + 1 ) * card_vertical_overlap_gap), card_width, card_height)];
-                view.rowInBoard = row + 1;
-                view.columnInBoard = column;
-                [view setCardViewWithValue:[[myGame getRealSelectedCard] getValue] suit:[[myGame getRealSelectedCard] getSuit] title:[[myGame getRealSelectedCard] getPrintableCardString]];
-                [cards[column] addObject:view];
-                if (cards[column].count > realignCardThreshold) {
-                    [self alignCardBasedOnRow:cards[column] atColumn:column];
-                }
-                [view setCardListener:self];
-                [boardView addSubview:view positioned:NSWindowAbove relativeTo:cards[column][row]];
-                [tempCells[clickedFreeCellIndex] setImage:nil];
-            } else if (ret == 1) {
-                // nothing to move
-            } else if (ret == -1) {
+            if (row != cards[column].count - 1) {
                 [self showIllegalMoveWarning];
                 [tempCells[clickedFreeCellIndex] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
+                
+            } else {
+                int ret = [myGame moveCardFromTempCellToGameBoardColumn:column];
+                if (ret == 0) {
+                    // successful
+                    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
+                    CardView *view = [[CardView alloc] initWithFrame:CGRectMake((horizontal_gap + card_width) * column,
+                                                                                boardView.frame.size.height - (card_height + (row + 1 ) * card_vertical_overlap_gap), card_width, card_height)];
+                    view.rowInBoard = row + 1;
+                    view.columnInBoard = column;
+                    [view setCardViewWithValue:[[myGame getRealSelectedCard] getValue] suit:[[myGame getRealSelectedCard] getSuit] title:[[myGame getRealSelectedCard] getPrintableCardString]];
+                    [cards[column] addObject:view];
+                    if (cards[column].count > realignCardThreshold) {
+                        [self alignCardBasedOnRow:cards[column] atColumn:column];
+                    }
+                    [view setCardListener:self];
+                    [boardView addSubview:view positioned:NSWindowAbove relativeTo:cards[column][row]];
+                    [tempCells[clickedFreeCellIndex] setImage:nil];
+                } else if (ret == 1) {
+                    // nothing to move
+                } else if (ret == -1) {
+                    [self showIllegalMoveWarning];
+                    [tempCells[clickedFreeCellIndex] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
+                }
             }
-            
             clickedFreeCellIndex = -1;
             isSelected = NO;
             [myGame deselectCard];
@@ -255,22 +260,33 @@
             // move card(s)
             if (isSelectMultiple) {
                 // move a list of cards
-                int ret = [myGame moveMultipleCardFromColumn:clickedColumn fromRow:clickedRow toColumn:column];
-                if (ret != 0) {
-                    // nothing to move
+                if (row != cards[column].count - 1) {
+                    [self showIllegalMoveWarning];
                     [self deselectCardsAtColumn];
-                } 
+                } else {
+                    int ret = [myGame moveMultipleCardFromColumn:clickedColumn fromRow:clickedRow toColumn:column];
+                    if (ret != 0) {
+                        // nothing to move
+                        [self deselectCardsAtColumn];
+                    }
+                }
                 clickedColumn = -1;
                 clickedRow = -1;
                 isSelected = NO;
                 isSelectMultiple = NO;
             } else {
                 // move single card
-                BOOL flag = [myGame moveSingleCardFromColumn:clickedColumn toColumn:column];
-                isSelected = NO;
-                [myGame deselectCard];
-                if (!flag) {
+                if (row != cards[column].count - 1) {
+                    [self showIllegalMoveWarning];
                     [cards[clickedColumn][clickedRow] deselectCard];
+                    isSelected = NO;
+                } else {
+                    BOOL flag = [myGame moveSingleCardFromColumn:clickedColumn toColumn:column];
+                    isSelected = NO;
+                    [myGame deselectCard];
+                    if (!flag) {
+                        [cards[clickedColumn][clickedRow] deselectCard];
+                    }
                 }
                 clickedRow = -1;
                 clickedColumn = -1;
@@ -556,6 +572,7 @@
         case gamePlaying:
             break;
         case gameDeadEnd:
+            [self showDeadEndWarning];
             break;
     }
 }

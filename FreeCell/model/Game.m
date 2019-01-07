@@ -17,6 +17,8 @@
     Card *selectedCard;
     NSMutableArray <Card *> *selectedCards;
     NSMutableArray <Card *> *decks;
+    
+    BOOL isAutoFinish;
 }
 @end
 @implementation Game
@@ -28,6 +30,7 @@
         lastRow = [NSMutableArray array];
         freeCells = [NSMutableArray array];
         decks = [NSMutableArray array];
+        isAutoFinish = NO;
     }
     return self;
 }
@@ -75,6 +78,7 @@
 #if DEBUG_PRINT
     NSLog(@"Here is the cards in last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+    [self checkGame];
     [self autoFinish:NO];
     return YES;
 }
@@ -91,6 +95,7 @@
 #if DEBUG_PRINT
         NSLog(@"Here is the cards in last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+        [self checkGame];
         [self autoFinish:NO];
         return 0;
     } else {
@@ -112,6 +117,7 @@
         NSLog(@"Here is the card column after card moved:\n%@",[self getPrintabeCardColumn:columnTo]);
         NSLog(@"Here is the last row of the board:\n%@",[self getPrintableCardInLastRow]);
 #endif
+        [self checkGame];
         [self autoFinish:NO];
         return YES;
     } else {
@@ -139,6 +145,7 @@
     NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
     NSLog(@"Last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+    [self checkGame];
     [self autoFinish:NO];
     return 0;
 }
@@ -155,6 +162,9 @@
             lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
             [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getCardImageName:card]];
             [self checkGame];
+            if (!isAutoFinish) {
+                [self autoFinish];
+            }
             return YES;
         } else {
             return NO;
@@ -172,6 +182,9 @@
             lastRow[columnFrom] = [gameboard[columnFrom] lastObject] ? [gameboard[columnFrom] lastObject] : [[Card alloc] initEmptyCard];
             [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getCardImageName:card]];
             [self checkGame];
+            if (!isAutoFinish) {
+                [self autoFinish];
+            }
             return YES;
         } else {
             return NO;
@@ -183,7 +196,6 @@
     if ([selectedCard getValue] == 1 && [decks[index] isEmptyCard]) {
         decks[index] = selectedCard;
         freeCells[[freeCells indexOfObject:selectedCard]] = [[Card alloc] initEmptyCard];
-        [self autoFinish:NO];
         [self checkGame];
         return YES;
     } else {
@@ -194,7 +206,6 @@
         if ([temp getValue] + 1 == [selectedCard getValue] && [temp getSuit] == [selectedCard getSuit]) {
             decks[index] = selectedCard;
             freeCells[[freeCells indexOfObject:selectedCard]] = [[Card alloc] initEmptyCard];
-            [self autoFinish:NO];
             [self checkGame];
             return YES;
         } else {
@@ -220,6 +231,7 @@
         NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
         NSLog(@"Last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+        [self checkGame];
         [self autoFinish:NO];
         return cardsToMove;
     } else {
@@ -234,6 +246,7 @@
         NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
         NSLog(@"Last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+        [self checkGame];
         [self autoFinish:NO];
         return freeCellCount;
     }
@@ -308,6 +321,7 @@
     if ([self isGameWin]) {
         [_myUIListener checkGame:gameWin];
     } else if ([self checkDeadEnd]){
+        NSLog(@"Dead End!!!");
         [_myUIListener checkGame:gameDeadEnd];
     } else {
         [_myUIListener checkGame:gamePlaying];
@@ -427,7 +441,27 @@
 }
 
 - (BOOL) checkDeadEnd {
-    return NO;
+#if DEBUG_PRINT
+    NSLog(@"Check dead end");
+#endif
+    for (int i = 0; i < number_of_temp_cells; i++) {
+        if ([freeCells[i] isEmptyCard]) {
+            return NO;
+        }
+    }
+    for (int i = 0; i < number_of_column; i ++) {
+        Card *temp = lastRow[i];
+        if ([temp isEmptyCard]) return NO;
+        for (int j = 0; j < 4; j ++) {
+            if ([temp getSuit] == [decks[j] getSuit] && [temp getValue] == [decks[j] getValue] + 1) return NO;
+            else if ([temp getCardColor] != [freeCells[j] getCardColor] && [temp getValue] == [freeCells[j] getValue] + 1) return NO;
+        }
+        
+        for (int j = i + 1; j < number_of_column; j ++) {
+            if ([temp getCardColor] != [lastRow[j] getCardColor] && [temp getValue] + 1 == [lastRow[j] getValue]) return NO;
+        }
+    }
+    return YES;
 }
 
 - (NSString *) getCardImageName:(Card *) card {
@@ -435,6 +469,7 @@
 }
 
 - (void) autoFinish:(BOOL) isForce {
+    isAutoFinish = YES;
     for (int i = 0; i < number_of_column; i ++) {
 #if AUTO_FINISH_PRINT
         NSLog(@"=====================");
@@ -456,6 +491,7 @@
             }
         }
     }
+    isAutoFinish = NO;
 }
 
 /********************************* PRINT METHODS ***************************************/
