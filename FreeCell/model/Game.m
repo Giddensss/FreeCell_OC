@@ -152,7 +152,7 @@
 
 - (BOOL) moveCardToCollectionFromColumn:(int)columnFrom toCollectionIndex:(int)index {
     Card *card = [gameboard[columnFrom] lastObject];
-#if DEBUG_PRINT
+#if AUTO_FINISH_PRINT
     NSLog(@"Trying to collect card %@",[card getPrintableCardString]);
 #endif
     if ([card getValue] == 1) {
@@ -171,7 +171,7 @@
         }
     } else {
         Card *temp = decks[index];
-#if DEBUG_PRINT
+#if AUTO_FINISH_PRINT
         NSLog(@"Card in the selected cell %@",[temp getPrintableCardString]);
 #endif
         if ([temp isEmptyCard]) {
@@ -321,7 +321,6 @@
     if ([self isGameWin]) {
         [_myUIListener checkGame:gameWin];
     } else if ([self checkDeadEnd]){
-        NSLog(@"Dead End!!!");
         [_myUIListener checkGame:gameDeadEnd];
     } else {
         [_myUIListener checkGame:gamePlaying];
@@ -330,6 +329,10 @@
 
 - (void) autoFinish {
     [self autoFinish:YES];
+}
+
+- (BOOL) isEmptyCell:(int)index {
+    return [freeCells[index] isEmptyCard];
 }
 
 /********************************* HELP METHOD ***************************************/
@@ -441,26 +444,62 @@
 }
 
 - (BOOL) checkDeadEnd {
-#if DEBUG_PRINT
+#if CHECK_DEAD_END_PRINT
     NSLog(@"Check dead end");
 #endif
     for (int i = 0; i < number_of_temp_cells; i++) {
         if ([freeCells[i] isEmptyCard]) {
+#if CHECK_DEAD_END_PRINT
+            NSLog(@"Not dead end: Empty free cell at %d",i);
+#endif
             return NO;
+        }
+        for (int j = 0; j < 4; j ++) {
+            if ([freeCells[i] getValue] == [decks[j] getValue] + 1 && [freeCells[i] getSuit] == [decks[j] getSuit]) {
+#if CHECK_DEAD_END_PRINT
+                NSLog(@"Not dead end: card at free cell %d can be collected to deck %d",i,j);
+#endif
+                return  NO;
+            }
         }
     }
     for (int i = 0; i < number_of_column; i ++) {
         Card *temp = lastRow[i];
-        if ([temp isEmptyCard]) return NO;
+        if ([temp isEmptyCard]) {
+#if CHECK_DEAD_END_PRINT
+            NSLog(@"Not dead end: empty column at %d",i);
+#endif
+            return NO;
+            
+        }
         for (int j = 0; j < 4; j ++) {
-            if ([temp getSuit] == [decks[j] getSuit] && [temp getValue] == [decks[j] getValue] + 1) return NO;
-            else if ([temp getCardColor] != [freeCells[j] getCardColor] && [temp getValue] == [freeCells[j] getValue] + 1) return NO;
+            if ([temp getSuit] == [decks[j] getSuit] && [temp getValue] == [decks[j] getValue] + 1) {
+#if CHECK_DEAD_END_PRINT
+                NSLog(@"Not dead end: card at column %d can be collected to deck %d",i,j);
+#endif
+                return NO;
+            }
+            else if ([temp getCardColor] != [freeCells[j] getCardColor] && [temp getValue] == [freeCells[j] getValue] + 1) {
+#if CHECK_DEAD_END_PRINT
+                NSLog(@"Not dead end: free cell %d to column %d",j,i);
+#endif
+                return NO;
+            }
         }
         
-        for (int j = i + 1; j < number_of_column; j ++) {
-            if ([temp getCardColor] != [lastRow[j] getCardColor] && [temp getValue] + 1 == [lastRow[j] getValue]) return NO;
+        for (int j = 0; j < number_of_column; j ++) {
+            if ([temp getCardColor] != [lastRow[j] getCardColor] && [temp getValue] + 1 == [lastRow[j] getValue])
+            {
+#if CHECK_DEAD_END_PRINT
+                NSLog(@"Not dead end: still has legal move on board: from %d to %d",i,j);
+#endif
+                return NO;
+            }
         }
     }
+#if CHECK_DEAD_END_PRINT
+    NSLog(@"DEAD END!!!!");
+#endif
     return YES;
 }
 

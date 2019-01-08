@@ -122,10 +122,18 @@
                     clickedFreeCellIndex = -1;
                     isSelected = NO;
                 } else {
-                    [tempCells[clickedFreeCellIndex] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
-                    clickedFreeCellIndex = index;
-                    [myGame selectCardAtTempCell:clickedFreeCellIndex];
-                    [sender setImage:[NSImage imageNamed:[NSString stringWithFormat:@"%@_highlight",[myGame getSelectedCard]]]];
+                    if (![myGame isEmptyCell:index]) {
+                        [tempCells[clickedFreeCellIndex] setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
+                        clickedFreeCellIndex = index;
+                        [myGame selectCardAtTempCell:clickedFreeCellIndex];
+                        [sender setImage:[NSImage imageNamed:[NSString stringWithFormat:@"%@_highlight",[myGame getSelectedCard]]]];
+                    } else {
+                        [tempCells[clickedFreeCellIndex] setImage:nil];
+                        [sender setImage:[NSImage imageNamed:[myGame getSelectedCard]]];
+                        [myGame deselectCard];
+                        clickedFreeCellIndex = -1;
+                        isSelected = NO;
+                    }
                 }
                 return;
             }

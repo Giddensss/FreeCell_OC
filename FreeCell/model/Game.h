@@ -84,6 +84,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) resetGame;
 
 - (void) autoFinish;
+
+- (BOOL) isEmptyCell:(int) index;
 @end
 
 NS_ASSUME_NONNULL_END

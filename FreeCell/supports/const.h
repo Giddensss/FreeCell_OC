@@ -11,6 +11,7 @@
 #define DEBUG_PRINT 1
 #define DEBUG_VIEW 0
 #define AUTO_FINISH_PRINT 0
+#define CHECK_DEAD_END_PRINT 1
 enum CardSuit{
     suitSpade,
     suitHeart,
