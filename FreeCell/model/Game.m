@@ -473,7 +473,7 @@
             
         }
         for (int j = 0; j < 4; j ++) {
-            if ([temp getSuit] == [decks[j] getSuit] && [temp getValue] == [decks[j] getValue] + 1) {
+            if (([temp getSuit] == [decks[j] getSuit] && [temp getValue] == [decks[j] getValue] + 1) || ([temp getValue] == 1 && [decks[j] isEmptyCard])) {
 #if CHECK_DEAD_END_PRINT
                 NSLog(@"Not dead end: card at column %d can be collected to deck %d",i,j);
 #endif
