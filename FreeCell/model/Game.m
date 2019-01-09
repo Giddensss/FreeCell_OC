@@ -163,7 +163,7 @@
             [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getCardImageName:card]];
             [self checkGame];
             if (!isAutoFinish) {
-                [self autoFinish];
+                [self autoFinish:NO];
             }
             return YES;
         } else {
@@ -183,7 +183,7 @@
             [_myUIListener onCardMoveFromColumn:columnFrom toCollectionIndex:index card:[self getCardImageName:card]];
             [self checkGame];
             if (!isAutoFinish) {
-                [self autoFinish];
+                [self autoFinish:NO];
             }
             return YES;
         } else {
