@@ -38,12 +38,36 @@ const static int longest_card_name = 17;
 const static int number_of_free_cells = number_of_temp_cells;
 
 // cosnt for UI
+/*
+ * The size of window is fixed. Don't change the values of these constants.
+ * Or resize the window first, then update the values.
+ *
+ */
+const static CGFloat window_width = 1200.0f;
+const static CGFloat window_height = 700.0f;
+
+/*
+ *
+ * The value of this constant is fixed as well. Don't change it.
+ * Or modify the storyboard first, and then update the value
+ *
+ */
+const static CGFloat top_cell_area_height = 218;
+
+const static CGFloat gap_between_top_cell = 4.0f;
+const static CGFloat top_cell_bound_diff = 4.0f;
+
+const static CGFloat indicatitor_size = 48.0f;
 const static CGFloat card_horizontal_margin = 20.0f;
 const static CGFloat card_vertical_overlap_gap = 35;
-const static CGFloat card_width = 111.0f;
-const static CGFloat card_height = 166.0f;
+const static CGFloat card_size_ratio = 0.7f;
+const static CGFloat card_image_width = 165.0f;
+const static CGFloat card_image_height = 250.0f;
+const static CGFloat card_width = card_image_width * card_size_ratio;
+const static CGFloat card_height = card_image_height * card_size_ratio;
 const static CGFloat choicePickerViewWidth = 330.0f;
 const static CGFloat choicePickerViewHeight = 150.0f;
+
 
 // other constants
 const static int auto_finish_card_value_threshold = 4;

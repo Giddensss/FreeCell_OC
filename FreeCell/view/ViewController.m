@@ -14,6 +14,14 @@
 @interface ViewController() {
     IBOutlet NSButton *indicator;
     
+    IBOutlet NSImageView *topCellBound0;
+    IBOutlet NSImageView *topCellBound1;
+    IBOutlet NSImageView *topCellBound2;
+    IBOutlet NSImageView *topCellBound3;
+    IBOutlet NSImageView *topCellBound4;
+    IBOutlet NSImageView *topCellBound5;
+    IBOutlet NSImageView *topCellBound6;
+    IBOutlet NSImageView *topCellBound7;
     IBOutlet NSButton *tempCell0;
     IBOutlet NSButton *tempCell1;
     IBOutlet NSButton *tempCell2;
@@ -27,6 +35,7 @@
     
     NSMutableArray <NSButton *>*tempCells;
     NSMutableArray <NSButton *>*cells;
+    NSMutableArray <NSImageView *> *topCellBounds;
     NSMutableArray <NSMutableArray <CardView *> *> *cards;
     NSMutableArray <EmptyCardView *> *emptyCards;
     AppDelegate *myDelegate;
@@ -64,9 +73,27 @@
     // setup top btns
     tempCells = [NSMutableArray arrayWithObjects:tempCell0,tempCell1,tempCell2,tempCell3, nil];
     cells = [NSMutableArray arrayWithObjects:cell0,cell1,cell2,cell3, nil];
+    topCellBounds = [NSMutableArray arrayWithObjects:topCellBound0,topCellBound1,topCellBound2,topCellBound3,topCellBound4,topCellBound5,topCellBound6,topCellBound7, nil];
+    [indicator setFrame:NSMakeRect((window_width - indicatitor_size) / 2,
+                                   (window_height - top_cell_area_height) + (top_cell_area_height - indicatitor_size) / 2,
+                                   indicatitor_size, indicatitor_size)];
+    CGFloat topCellBoundWidth = card_width + top_cell_bound_diff;
+    CGFloat topCellBoundHeight = card_height + top_cell_bound_diff;
+    CGFloat leftBoundStartX = (indicator.frame.origin.x - number_of_free_cells * topCellBoundWidth - (number_of_free_cells - 1) * gap_between_top_cell) / 2;
+    CGFloat rightBoundStartX = (indicator.frame.origin.x + indicatitor_size) + leftBoundStartX;
+    CGFloat boundStartY = window_height - (top_cell_area_height - topCellBoundHeight) / 2 - topCellBoundHeight;
     for (int i = 0; i < tempCells.count; i ++) {
+        [topCellBounds[i] setFrame:CGRectMake(leftBoundStartX + i * (topCellBoundWidth + gap_between_top_cell),
+                                              boundStartY,topCellBoundWidth , topCellBoundHeight)];
+        [topCellBounds[i + 4] setFrame:CGRectMake(rightBoundStartX + i * (topCellBoundWidth + gap_between_top_cell),
+                                                  boundStartY,topCellBoundWidth , topCellBoundHeight)];
         NSButton *button = tempCells[i];
         button.accessibilityTitle = [NSString stringWithFormat:@"temp%d",i];
+        [button setFrame:CGRectMake(leftBoundStartX + top_cell_bound_diff / 2 + i * (card_width + gap_between_top_cell + top_cell_bound_diff ),
+                                    boundStartY + top_cell_bound_diff / 2, card_width, card_height)];
+#if DEBUG_VIEW
+        [button setImage:[NSImage imageNamed:@"card_1_0"]];
+#endif
         [button setTarget:self];
         [button setAction:@selector(topCellBtnClicked:)];
         [button setHighlighted:NO];
@@ -74,6 +101,11 @@
         [(NSButtonCell *)button.cell setHighlightsBy:NSNoCellMask];
         NSButton *cellBtn = cells[i];
         cellBtn.accessibilityTitle = [NSString stringWithFormat:@"cell%d",i];
+        [cellBtn setFrame:CGRectMake(rightBoundStartX + top_cell_bound_diff / 2 + i * (card_width + gap_between_top_cell + top_cell_bound_diff ),
+                                    boundStartY + top_cell_bound_diff / 2, card_width, card_height)];
+#if DEBUG_VIEW
+        [cellBtn setImage:[NSImage imageNamed:@"card_1_0"]];
+#endif
         [cellBtn setTarget:self];
         [cellBtn setAction:@selector(topCellBtnClicked:)];
         [cellBtn setHighlighted:NO];

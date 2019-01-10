@@ -267,11 +267,19 @@
                         <outlet property="cell1" destination="R5y-pl-PWf" id="mpc-AU-7gd"/>
                         <outlet property="cell2" destination="2w5-6N-xmR" id="3LP-qv-EOH"/>
                         <outlet property="cell3" destination="iHI-le-WLo" id="OqE-Ef-4En"/>
-                        <outlet property="indicator" destination="SOw-pi-ooW" id="nig-h3-tz1"/>
+                        <outlet property="indicator" destination="SOw-pi-ooW" id="LUw-l6-fsO"/>
                         <outlet property="tempCell0" destination="AKN-bc-szG" id="jeo-3e-dwj"/>
                         <outlet property="tempCell1" destination="zMJ-aP-Qgy" id="j0p-EU-NMW"/>
                         <outlet property="tempCell2" destination="KWD-Q3-lQC" id="IeZ-Cr-CRR"/>
                         <outlet property="tempCell3" destination="ffy-NW-OwQ" id="iFk-5W-bEJ"/>
+                        <outlet property="topCellBound0" destination="9fc-CS-Ky9" id="zTR-6j-P4r"/>
+                        <outlet property="topCellBound1" destination="DJM-Td-GkK" id="HAs-0Z-4pL"/>
+                        <outlet property="topCellBound2" destination="b4k-DO-8iV" id="TJe-NS-dys"/>
+                        <outlet property="topCellBound3" destination="G2W-fk-7ZT" id="iBz-8P-kDT"/>
+                        <outlet property="topCellBound4" destination="Gc8-qQ-7nL" id="pGL-3q-Kcp"/>
+                        <outlet property="topCellBound5" destination="jrh-NQ-vT4" id="JWG-jp-64S"/>
+                        <outlet property="topCellBound6" destination="JYA-Gy-n2N" id="E28-BY-zjk"/>
+                        <outlet property="topCellBound7" destination="q8v-zI-PVu" id="hTU-ep-dbq"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
