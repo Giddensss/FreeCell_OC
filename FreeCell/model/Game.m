@@ -214,7 +214,7 @@
     }
 }
 
-- (int) moveSelectedCardsToEmptyColumnFromColumn:(int)columnFrom toColumn:(int) columnTo{
+- (void) moveSelectedCardsToEmptyColumnFromColumn:(int)columnFrom toColumn:(int) columnTo{
     int freeCellCount = [self calculateFreeCells:selectedCards emptyColumn:columnTo] + 1;
 #if DEBUG_PRINT
     NSLog(@"Calculate free cells for moving cards to an empty column %d",freeCellCount);
@@ -231,9 +231,9 @@
         NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
         NSLog(@"Last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+        [_myUIListener onCardsMoveFromColumn:columnFrom toEmptyColumn:columnTo numberOfCard:cardsToMove];
         [self checkGame];
         [self autoFinish:NO];
-        return cardsToMove;
     } else {
         NSArray <Card *> *temp = [selectedCards subarrayWithRange:NSMakeRange(selectedCards.count - freeCellCount, freeCellCount)];
         [gameboard[columnTo] addObjectsFromArray:temp];
@@ -246,10 +246,12 @@
         NSLog(@"Cards move to column:\n%@",[self getPrintabeCardColumn:columnTo]);
         NSLog(@"Last row:\n%@",[self getPrintableCardInLastRow]);
 #endif
+        [_myUIListener onCardsMoveFromColumn:columnFrom toEmptyColumn:columnTo numberOfCard:freeCellCount];
         [self checkGame];
         [self autoFinish:NO];
-        return freeCellCount;
+    
     }
+    [self deselectCards];
 
 }
 

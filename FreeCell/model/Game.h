@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL) moveSelectedCardToCollection:(int) index;
 
-- (int) moveSelectedCardsToEmptyColumnFromColumn:(int) columnFrom toColumn:(int) columnTo;
+- (void) moveSelectedCardsToEmptyColumnFromColumn:(int) columnFrom toColumn:(int) columnTo;
 
 - (int) numberOfCardsAtColumn:(int) column;
 

@@ -22,6 +22,8 @@
 
 - (void) onCardMoveFromTempCell:(int) indexFrom toTempCell:(int) indexTo success:(BOOL) flag card:(NSString *) card;
 
+- (void) onCardsMoveFromColumn:(int) columnFrom toEmptyColumn:(int) columnTo numberOfCard:(int) count;
+
 - (void) onIllegalMove;
 
 - (void) onGameRest;

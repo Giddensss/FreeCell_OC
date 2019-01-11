@@ -412,53 +412,7 @@
     NSLog(@"Move Whole list to the empty column");
 #endif
     [ChoicePickerView setHidden:YES];
-    int cardsMoved = [myGame moveSelectedCardsToEmptyColumnFromColumn:clickedColumn toColumn:clickedEmptyColumn];
-#if DEBUG_PRINT
-    NSLog(@"Moving number of card %d",cardsMoved);
-#endif
-    [self deselectCardsAtColumn];
-    NSMutableArray <CardView *> *temp = [NSMutableArray array];
-    CGFloat verticalGap = card_vertical_overlap_gap;
-    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
-    if (cardsMoved > realignCardThreshold) verticalGap = (boardView.frame.size.height - card_height) / cardsMoved;
-    for (int i = 0; i < cardsMoved; i++) {
-        [temp addObject:cards[clickedColumn][cards[clickedColumn].count - i - 1]];
-        temp[i].columnInBoard = clickedEmptyColumn;
-        temp[i].rowInBoard = cardsMoved - i - 1; // temp array contains CardViews in a reversed order.
-#if DEBUG_PRINT
-        NSLog(@"laying CardView to %d,%d",clickedEmptyColumn,cardsMoved - i - 1);
-#endif
-        [temp[i] setFrame:CGRectMake((horizontal_gap + card_width) * clickedEmptyColumn,
-                                     boardView.frame.size.height - (card_height + temp[i].rowInBoard * verticalGap),
-                                     card_width,
-                                     card_height)];
-    }
-    for (int i = cardsMoved - 1; i >= 0; i --) {
-        [temp[i] removeFromSuperview];
-        if (i == cardsMoved - 1) {
-            [boardView addSubview:temp[i] positioned:NSWindowAbove relativeTo:emptyCards[clickedEmptyColumn]];
-        } else {
-            [boardView addSubview:temp[i] positioned:NSWindowAbove relativeTo:temp[i + 1]];
-        }
-        [cards[clickedEmptyColumn] addObject:temp[i]];
-    }
-    int previousCount = (int)cards[clickedColumn].count;
-    [cards[clickedColumn] removeObjectsInArray:temp];
-    if (previousCount > realignCardThreshold) {
-        if (cards[clickedColumn].count <= realignCardThreshold) {
-            [self alignCardNormal:cards[clickedColumn] atColumn:clickedColumn];
-        } else {
-            [self alignCardBasedOnRow:cards[clickedColumn] atColumn:clickedColumn];
-        }
-    }
-    
-    [myGame deselectCards];
-    clickedColumn = -1;
-    clickedRow = -1;
-    clickedEmptyColumn = -1;
-    isSelected = NO;
-
-    
+    [myGame moveSelectedCardsToEmptyColumnFromColumn:clickedColumn toColumn:clickedEmptyColumn];
 }
 
 - (void) onMoveSingleCardBtnClicked {
@@ -753,6 +707,52 @@
         clickedFreeCellIndex = -1;
         isSelected = NO;
     }
+}
+
+- (void) onCardsMoveFromColumn:(int)columnFrom toEmptyColumn:(int)columnTo numberOfCard:(int)count {
+#if DEBUG_PRINT
+    NSLog(@"Moving number of card %d",count);
+#endif
+    [self deselectCardsAtColumn];
+    NSMutableArray <CardView *> *temp = [NSMutableArray array];
+    CGFloat verticalGap = card_vertical_overlap_gap;
+    CGFloat horizontal_gap = (boardView.frame.size.width - number_of_column * card_width ) / (number_of_column - 1);
+    if (count > realignCardThreshold) verticalGap = (boardView.frame.size.height - card_height) / count;
+    for (int i = 0; i < count; i++) {
+        [temp addObject:cards[clickedColumn][cards[clickedColumn].count - i - 1]];
+        temp[i].columnInBoard = clickedEmptyColumn;
+        temp[i].rowInBoard = count - i - 1; // temp array contains CardViews in a reversed order.
+#if DEBUG_PRINT
+        NSLog(@"laying CardView to %d,%d",columnTo,count - i - 1);
+#endif
+        [temp[i] setFrame:CGRectMake((horizontal_gap + card_width) * columnTo,
+                                     boardView.frame.size.height - (card_height + temp[i].rowInBoard * verticalGap),
+                                     card_width,
+                                     card_height)];
+    }
+    for (int i = count - 1; i >= 0; i --) {
+        [temp[i] removeFromSuperview];
+        if (i == count - 1) {
+            [boardView addSubview:temp[i] positioned:NSWindowAbove relativeTo:emptyCards[columnTo]];
+        } else {
+            [boardView addSubview:temp[i] positioned:NSWindowAbove relativeTo:temp[i + 1]];
+        }
+        [cards[columnTo] addObject:temp[i]];
+    }
+    int previousCount = (int)cards[columnFrom].count;
+    [cards[columnFrom] removeObjectsInArray:temp];
+    if (previousCount > realignCardThreshold) {
+        if (cards[columnFrom].count <= realignCardThreshold) {
+            [self alignCardNormal:cards[columnFrom] atColumn:columnFrom];
+        } else {
+            [self alignCardBasedOnRow:cards[columnFrom] atColumn:columnFrom];
+        }
+    }
+    
+    clickedColumn = -1;
+    clickedRow = -1;
+    clickedEmptyColumn = -1;
+    isSelected = NO;
 }
 
 - (void) onIllegalMove {
