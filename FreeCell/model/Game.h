@@ -63,6 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (int) numberOfCardsAtColumn:(int) column;
 
+- (void) moveCardFromTempCell:(int) indexFrom toTempCell:(int) indexTo;
+
 - (NSString *) getSelectedCard;
 
 - (Card *) getRealSelectedCard;

@@ -253,6 +253,20 @@
 
 }
 
+- (void) moveCardFromTempCell:(int)indexFrom toTempCell:(int)indexTo {
+    if (![freeCells[indexTo] isEmptyCard]) {
+        NSString *card = [self getSelectedCard];
+        selectedCard = freeCells[indexTo];
+        [_myUIListener onCardMoveFromTempCell:indexFrom toTempCell:indexTo success:NO card:card];
+        
+    } else {
+        freeCells[indexTo] = freeCells[indexFrom];
+        freeCells[indexFrom] = [[Card alloc] initEmptyCard];
+        [_myUIListener onCardMoveFromTempCell:indexFrom toTempCell:indexTo success:YES card:[self getSelectedCard]];
+        [self deselectCard];
+    }
+}
+
 - (int) numberOfCardsAtColumn:(int)column {
     return (int)gameboard[column].count;
 }

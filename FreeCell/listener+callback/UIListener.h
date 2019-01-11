@@ -20,6 +20,8 @@
 
 - (void) onCardMoveFromColumn:(int) columnFrom toCollectionIndex:(int) index card:(NSString *) card;
 
+- (void) onCardMoveFromTempCell:(int) indexFrom toTempCell:(int) indexTo success:(BOOL) flag card:(NSString *) card;
+
 - (void) onIllegalMove;
 
 - (void) onGameRest;
