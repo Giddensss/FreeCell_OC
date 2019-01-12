@@ -631,7 +631,7 @@
         if (cards[columnFrom].count == realignCardThreshold) {
             [self alignCardNormal:cards[columnFrom] atColumn:columnFrom];
         } else {
-            [self alignCardBasedOnRow:cards[columnTo] atColumn:columnTo];
+            [self alignCardBasedOnRow:cards[columnFrom] atColumn:columnFrom];
         }
     }
 }
